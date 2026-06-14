@@ -21,6 +21,7 @@ Goal: make capture support extensible without turning SBS into an automation bot
 
 Focus:
 
+- Windows app packaging and smoke testing;
 - provider adapter registry;
 - adapter QA gates;
 - visible-evidence field mapping;
@@ -47,6 +48,7 @@ Goal: extend the SBS pattern beyond chatbots.
 Candidate arenas:
 
 - coding agents;
+- local coding-agent automation engines;
 - research agents;
 - workflow/browser agents;
 - document agents;
@@ -59,6 +61,14 @@ Each new arena should define its own:
 - capture or trace adapter;
 - grader dimensions;
 - report standard.
+
+## Longer-Term Product Directions
+
+- Report templates for different decision styles, such as PM memo, technical audit, and leadership summary.
+- Run-to-run comparison so teams can see whether product or prompt changes improved the verdict.
+- Reproducible benchmark bundles that package eval cases, evidence, grader settings, and reports.
+- More public task-space examples beyond the current job-interview showcase.
+- Team sharing and review workflows for approving cases, challenging evidence, and signing off on reports.
 
 ## Non-Goals For The First Public Release
 

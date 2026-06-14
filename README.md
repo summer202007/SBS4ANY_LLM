@@ -462,6 +462,31 @@ Read / 继续阅读：
 - [docs/capture-adapters.md](docs/capture-adapters.md)
 - [docs/roadmap.md](docs/roadmap.md)
 
+## Roadmap / 未来迭代计划
+
+SBS is starting with a local chatbot side-by-side loop, then expanding toward broader agent evaluation.
+
+SBS 会先把本地 chatbot side-by-side 评测闭环做好，再逐步扩展到更广义的 agent 评测。
+
+Planned directions:
+
+计划方向：
+
+- **Windows support**: package and test the local app for Windows users.
+- **兼容 Windows**：为 Windows 用户打包和测试本地 App。
+- **More local coding-agent engines**: support more local coding agents as automation and evaluation engines.
+- **兼容更多本地 coding agent 引擎**：让更多本地 coding agents 可以作为自动化和评测执行引擎。
+- **Coding-agent evaluation arenas**: extend SBS from chatbot outputs to repo tasks, code changes, test results, and review evidence.
+- **拓展 coding agent 测评能力**：从 chatbot 输出扩展到仓库任务、代码改动、测试结果和 review 证据。
+- **More task-space examples**: add public examples beyond job-interview coaching, such as shopping, research, coding, and workflow agents.
+- **更多任务空间样例**：新增求职面试之外的公开样例，例如购物、研究、coding 和 workflow agents。
+- **Adapter ecosystem**: make capture adapters easier to build, verify, and share without automating third-party product usage.
+- **采集适配器生态**：让 capture adapters 更容易构建、验证和分享，同时保持不自动操作第三方产品的边界。
+- **Report templates and comparison views**: support different report styles, run-to-run comparisons, and clearer optimization tracking.
+- **报告模板和对比视图**：支持不同报告风格、多次 run 对比，以及更清晰的优化跟踪。
+- **Reproducible benchmark bundles**: package eval cases, evidence, grader settings, and reports so others can inspect or rerun the same decision.
+- **可复现 benchmark bundle**：把 eval cases、证据、grader 设置和报告打包，让其他人可以检查或复跑同一个判断。
+
 ## Safety And Collection Boundary / 安全与采集边界
 
 Assisted capture is user-operated and read-only.
