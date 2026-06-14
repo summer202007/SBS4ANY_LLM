@@ -1,0 +1,3 @@
+display_name: Chatbot Eval-Set Generator
+short_description: Generate structured chatbot SBS eval packages with self-critique traces.
+default_prompt: Generate a structured chatbot runtime eval package from product-provided SBS workbench inputs.

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GraderQualityAudit",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifactType",
+    "taskId",
+    "runId",
+    "createdAt",
+    "auditSummary",
+    "qualityGateResults",
+    "evidenceCitationAudit",
+    "exposureSafetyAudit",
+    "aggregationAudit",
+    "redLineAudit",
+    "noiseRobustnessAudit",
+    "remainingRisks",
+    "recommendedHumanSpotChecks"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "GraderQualityAudit" },
+    "taskId": { "type": "string" },
+    "runId": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "auditSummary": {
+      "type": "object",
+      "required": ["overallStatus", "summary"],
+      "properties": {
+        "overallStatus": { "enum": ["pass", "warn", "fail"] },
+        "summary": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "qualityGateResults": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "reason"],
+        "properties": {
+          "status": { "enum": ["pass", "warn", "fail", "not_applicable"] },
+          "reason": { "type": "string" },
+          "affectedCaseRefs": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "evidenceCitationAudit": { "type": "object" },
+    "exposureSafetyAudit": { "type": "object" },
+    "aggregationAudit": { "type": "object" },
+    "redLineAudit": { "type": "object" },
+    "noiseRobustnessAudit": { "type": "object" },
+    "remainingRisks": { "type": "array", "items": { "type": "object" } },
+    "recommendedHumanSpotChecks": { "type": "array", "items": { "type": "object" } }
+  },
+  "additionalProperties": true
+}
+

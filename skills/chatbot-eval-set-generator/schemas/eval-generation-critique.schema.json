@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvalGenerationCritique",
+  "type": "object",
+  "required": [
+    "findings",
+    "qualityGateResults",
+    "revisionPasses",
+    "revisionSummary",
+    "unresolvedConfirmationBacklogRefs",
+    "traceArtifactRefs",
+    "overallReadiness"
+  ],
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "findingId",
+          "severity",
+          "component",
+          "issue",
+          "whyItMatters",
+          "recommendedFix",
+          "fixApplied",
+          "remainingRisk",
+          "confirmationBacklogRef",
+          "affectedCaseRefs",
+          "affectedDimensionRefs"
+        ],
+        "properties": {
+          "findingId": { "type": "string", "minLength": 1 },
+          "severity": { "enum": ["blocker", "major", "minor", "note"] },
+          "component": {
+            "enum": [
+              "arenaEvalSpec",
+              "evalSetCoveragePlan",
+              "evalCases",
+              "turnScripts",
+              "rubricSuggestions",
+              "reportSkeletonMetadata",
+              "generationTrace",
+              "selfCritiqueTrace",
+              "overall"
+            ]
+          },
+          "issue": { "type": "string", "minLength": 1 },
+          "whyItMatters": { "type": "string", "minLength": 1 },
+          "recommendedFix": { "type": "string", "minLength": 1 },
+          "fixApplied": { "type": "boolean" },
+          "remainingRisk": { "type": "string" },
+          "confirmationBacklogRef": { "type": "string" },
+          "affectedCaseRefs": { "type": "array", "items": { "type": "string" } },
+          "affectedDimensionRefs": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "qualityGateResults": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "reason"],
+        "properties": {
+          "status": { "enum": ["pass", "warn", "fail", "not_applicable"] },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "revisionPasses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["passIndex", "changesApplied", "reason"],
+        "properties": {
+          "passIndex": { "type": "integer", "minimum": 1 },
+          "changesApplied": { "type": "array", "items": { "type": "string" } },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "revisionSummary": { "type": "string" },
+    "unresolvedConfirmationBacklogRefs": { "type": "array", "items": { "type": "string" } },
+    "traceArtifactRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "overallReadiness": {
+      "enum": ["ready_to_run", "ready_with_caveats", "needs_user_confirmation", "blocked"]
+    }
+  },
+  "additionalProperties": true
+}

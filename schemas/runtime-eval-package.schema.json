@@ -1,0 +1,625 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ChatbotRuntimeEvalPackage",
+  "type": "object",
+  "required": [
+    "arenaEvalSpec",
+    "evalSetCoveragePlan",
+    "evalCases",
+    "turnScripts",
+    "rubricSuggestions",
+    "reportSkeletonMetadata",
+    "generationTrace",
+    "selfCritiqueTrace",
+    "confirmationBacklog"
+  ],
+  "properties": {
+    "arenaEvalSpec": {
+      "type": "object",
+      "required": [
+        "taskSpace",
+        "evaluationScenario",
+        "decisionQuestion",
+        "targetUsers",
+        "userJobs",
+        "baseline",
+        "challenger",
+        "productSurface",
+        "assumptions",
+        "knownUnknowns",
+        "confidence",
+        "successDefinition",
+        "failureDefinition",
+        "riskBoundaries",
+        "evidenceAssumptions",
+        "requiresUserConfirmation",
+        "clarificationQuestions"
+      ],
+      "properties": {
+        "taskSpace": { "type": "string", "minLength": 1 },
+        "evaluationScenario": { "type": "string", "minLength": 1 },
+        "decisionContext": { "type": "string" },
+        "decisionQuestion": { "type": "string", "minLength": 1 },
+        "targetUsers": { "type": "array", "items": { "type": "string" } },
+        "userJobs": { "type": "array", "items": { "type": "string" } },
+        "baseline": { "type": "object" },
+        "challenger": { "type": "object" },
+        "productSurface": { "type": "string" },
+        "baselineUseMode": { "type": "string" },
+        "challengerUseMode": { "type": "string" },
+        "assumptions": { "type": "array", "items": { "type": "string" } },
+        "knownUnknowns": { "type": "array", "items": { "type": "string" } },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "successDefinition": { "type": "string", "minLength": 1 },
+        "failureDefinition": { "type": "string", "minLength": 1 },
+        "riskBoundaries": { "type": "array", "items": { "type": "string" } },
+        "evidenceAssumptions": { "type": "array", "items": { "type": "string" } },
+        "requiresUserConfirmation": { "type": "boolean" },
+        "clarificationQuestions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "question", "whyItMatters", "blocksGeneration"],
+            "properties": {
+              "id": { "type": "string" },
+              "question": { "type": "string" },
+              "whyItMatters": { "type": "string" },
+              "recommendedDefault": { "type": "string" },
+              "blocksGeneration": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "evalSetCoveragePlan": {
+      "type": "object",
+      "required": [
+        "defaultDimensions",
+        "scoredDimensions",
+        "diagnosticDimensions",
+        "baselineInsightDimensions",
+        "enabledDimensions",
+        "disabledDimensions",
+        "dimensionWeights",
+        "scalePreset",
+        "caseMix",
+        "caseCountTarget",
+        "caseTypeRationale",
+        "difficultyMix",
+        "riskMix",
+        "singleTurnRatio",
+        "multiTurnRatio",
+        "optionalExperiencePersonaModule",
+        "taskFitModule",
+        "coverageGaps",
+        "confirmationBacklogRefs",
+        "coverageRationale",
+        "requiresUserConfirmation"
+      ],
+      "properties": {
+        "defaultDimensions": { "type": "array", "items": { "type": "string" } },
+        "scoredDimensions": { "type": "array", "items": { "type": "string" } },
+        "diagnosticDimensions": { "type": "array", "items": { "type": "string" } },
+        "baselineInsightDimensions": { "type": "array", "items": { "type": "string" } },
+        "enabledDimensions": { "type": "array", "items": { "type": "string" } },
+        "disabledDimensions": { "type": "array", "items": { "type": "string" } },
+        "dimensionWeights": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "scalePreset": { "enum": ["smoke", "mvp", "formal", "regression"] },
+        "caseMix": { "type": "object" },
+        "caseCountTarget": { "type": "integer", "minimum": 1 },
+        "caseTypeRationale": { "type": "object" },
+        "difficultyMix": { "type": "object" },
+        "riskMix": { "type": "object" },
+        "singleTurnRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "multiTurnRatio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "optionalExperiencePersonaModule": { "type": "object" },
+        "taskFitModule": {
+          "type": "object",
+          "required": [
+            "status",
+            "relationshipToProductExperience",
+            "fitSignals",
+            "sourceContextSignals",
+            "scoredThroughDimensions",
+            "rewardPolicy",
+            "penaltyPolicy",
+            "rationale",
+            "confirmationBacklogRefs"
+          ],
+          "properties": {
+            "status": {
+              "enum": ["disabled", "scored", "diagnostic_only", "baseline_insight_only", "needs_user_confirmation"]
+            },
+            "relationshipToProductExperience": {
+              "enum": ["task_value_not_product_experience", "product_experience", "not_applicable"]
+            },
+            "fitSignals": { "type": "array", "items": { "type": "string" } },
+            "sourceContextSignals": { "type": "array", "items": { "type": "string" } },
+            "scoredThroughDimensions": { "type": "array", "items": { "type": "string" } },
+            "rewardPolicy": { "type": "string" },
+            "penaltyPolicy": { "type": "string" },
+            "rationale": { "type": "string" },
+            "confirmationBacklogRefs": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": true
+        },
+        "coverageGaps": { "type": "array", "items": { "type": "string" } },
+        "confirmationBacklogRefs": { "type": "array", "items": { "type": "string" } },
+        "coverageRationale": { "type": "string" },
+        "requiresUserConfirmation": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "evalCases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "caseType",
+          "capabilityCluster",
+          "scenarioArchetype",
+          "scenario",
+          "userPersona",
+          "userGoal",
+          "userFacingIntent",
+          "evaluatorIntent",
+          "hiddenIntent",
+          "constraints",
+          "initialPrompt",
+          "modelFacingPrompt",
+          "collectionInstructions",
+          "doNotRevealToModel",
+          "exposureContract",
+          "expectedOutcome",
+          "acceptableOutcomes",
+          "unacceptableOutcomes",
+          "mustDo",
+          "mustNotDo",
+          "failureModesToProbe",
+          "riskLevel",
+          "difficulty",
+          "discriminativeSignal",
+          "evidenceRequired",
+          "collectionMode",
+          "estimatedUserEffort",
+          "graderRefs",
+          "confirmationBacklogRefs"
+        ],
+        "properties": {
+          "caseId": { "type": "string", "minLength": 1 },
+          "caseType": {
+            "enum": [
+              "single_turn",
+              "scripted_multi_turn",
+              "adaptive_multi_turn",
+              "capability_probe",
+              "boundary_risk",
+              "regression_like"
+            ]
+          },
+          "capabilityCluster": { "type": "string" },
+          "scenarioArchetype": { "type": "string" },
+          "scenario": { "type": "string" },
+          "userPersona": { "type": "string" },
+          "userGoal": { "type": "string" },
+          "userFacingIntent": { "type": "string" },
+          "evaluatorIntent": { "type": "string" },
+          "hiddenIntent": { "type": "string" },
+          "constraints": { "type": "array", "items": { "type": "string" } },
+          "initialPrompt": { "type": "string" },
+          "modelFacingPrompt": { "type": "string" },
+          "collectionInstructions": { "type": "array", "items": { "type": "string" } },
+          "doNotRevealToModel": { "type": "array", "items": { "type": "string" } },
+          "exposureContract": {
+            "type": "object",
+            "required": [
+              "modelVisibleFactsAtStart",
+              "evaluatorOnlyFacts",
+              "hardScoringRequirements",
+              "inferenceTargets",
+              "nonScoringContext",
+              "fairnessNotes"
+            ],
+            "properties": {
+              "modelVisibleFactsAtStart": { "type": "array", "items": { "type": "string" } },
+              "evaluatorOnlyFacts": { "type": "array", "items": { "type": "string" } },
+              "hardScoringRequirements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["requirement", "source", "eligibleFromTurn"],
+                  "properties": {
+                    "requirement": { "type": "string", "minLength": 1 },
+                    "source": {
+                      "enum": [
+                        "model_facing_prompt",
+                        "turn_exposed_fact",
+                        "reasonable_inference",
+                        "general_safety_norm"
+                      ]
+                    },
+                    "eligibleFromTurn": { "type": "integer", "minimum": 1 },
+                    "relatedFields": { "type": "array", "items": { "type": "string" } }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "inferenceTargets": { "type": "array", "items": { "type": "string" } },
+              "nonScoringContext": { "type": "array", "items": { "type": "string" } },
+              "fairnessNotes": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "expectedOutcome": { "type": "string", "minLength": 1 },
+          "acceptableOutcomes": { "type": "array", "items": { "type": "string" } },
+          "unacceptableOutcomes": { "type": "array", "items": { "type": "string" } },
+          "mustDo": { "type": "array", "items": { "type": "string" } },
+          "mustNotDo": { "type": "array", "items": { "type": "string" } },
+          "failureModesToProbe": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "riskLevel": { "enum": ["low", "medium", "high"] },
+          "difficulty": { "enum": ["easy", "medium", "hard"] },
+          "discriminativeSignal": { "type": "string", "minLength": 1 },
+          "evidenceRequired": { "type": "object" },
+          "collectionMode": {
+            "enum": [
+              "manual_single_prompt",
+              "manual_multi_turn",
+              "manual_with_visible_transcript",
+              "future_automated"
+            ]
+          },
+          "estimatedUserEffort": { "enum": ["low", "medium", "high"] },
+          "graderRefs": { "type": "array", "items": { "type": "string" } },
+          "confirmationBacklogRefs": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "turnScripts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "scriptMode",
+          "maxTurns",
+          "stateToTrack",
+          "fairnessPolicy",
+          "doNotRevealToModel",
+          "runtimeStateTemplate",
+          "harnessExecutionContract",
+          "turns",
+          "stopCondition",
+          "collectionBurden"
+        ],
+        "properties": {
+          "caseId": { "type": "string" },
+          "scriptMode": { "enum": ["fixed", "guided_adaptive", "hybrid"] },
+          "maxTurns": { "type": "integer", "minimum": 1 },
+          "stateToTrack": { "type": "array", "items": { "type": "string" } },
+          "fairnessPolicy": { "type": "string" },
+          "doNotRevealToModel": { "type": "array", "items": { "type": "string" } },
+          "runtimeStateTemplate": {
+            "type": "object",
+            "required": [
+              "cursorFields",
+              "upstreamContextFields",
+              "transcriptFields",
+              "decisionFields",
+              "safetyFields",
+              "outputFields"
+            ],
+            "properties": {
+              "cursorFields": { "type": "array", "items": { "type": "string" } },
+              "packageBindingFields": { "type": "array", "items": { "type": "string" } },
+              "upstreamContextFields": { "type": "array", "items": { "type": "string" } },
+              "transcriptFields": { "type": "array", "items": { "type": "string" } },
+              "decisionFields": { "type": "array", "items": { "type": "string" } },
+              "safetyFields": { "type": "array", "items": { "type": "string" } },
+              "outputFields": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": true
+          },
+          "harnessExecutionContract": {
+            "type": "object",
+            "required": [
+              "runtimeModelMode",
+              "cursorOwner",
+              "sideBlind",
+              "decisionPolicy",
+              "branchFallbackPolicy",
+              "preSendValidation",
+              "replayLogFields",
+              "plannerDrafterSplit",
+              "humanReviewFallbackRequired"
+            ],
+            "properties": {
+              "runtimeModelMode": {
+                "enum": [
+                  "manual_driver",
+                  "llm_single_step_guarded",
+                  "llm_two_stage_planner_drafter",
+                  "future_automated"
+                ]
+              },
+              "cursorOwner": { "enum": ["harness"] },
+              "sideBlind": { "type": "boolean" },
+              "decisionPolicy": { "enum": ["fixed_sequence", "branch_rules_only"] },
+              "branchFallbackPolicy": { "enum": ["not_applicable", "allowed_adaptive_moves_or_needs_human_review"] },
+              "preSendValidation": { "type": "array", "items": { "type": "string" } },
+              "replayLogFields": { "type": "array", "items": { "type": "string" } },
+              "plannerDrafterSplit": { "enum": ["not_applicable", "recommended", "required"] },
+              "humanReviewFallbackRequired": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          },
+          "turns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "turnIndex",
+                "progressLabel",
+                "modelFacingUserMessage",
+                "evaluatorInstruction",
+                "intentionToPush",
+                "expectedStateAfterTurn",
+                "exposureDelta",
+                "allowedAdaptiveMoves",
+                "branchRules",
+                "ifModelDrifts",
+                "ifModelAsksClarifyingQuestion",
+                "ifModelOverpromises",
+                "ifModelRefusesOrCannotAnswer"
+              ],
+              "properties": {
+                "turnIndex": { "type": "integer", "minimum": 1 },
+                "userMessage": { "type": "string" },
+                "progressLabel": { "type": "string" },
+                "modelFacingUserMessage": { "type": "string" },
+                "evaluatorInstruction": { "type": "string" },
+                "intentionToPush": { "type": "string" },
+                "expectedStateAfterTurn": { "type": "string" },
+                "exposureDelta": {
+                  "type": "object",
+                  "required": [
+                    "exposedFactsBeforeTurn",
+                    "newlyExposedFacts",
+                    "modelVisibleRequirementsAfterTurn",
+                    "allowedNewFactsToExpose"
+                  ],
+                  "properties": {
+                    "exposedFactsBeforeTurn": { "type": "array", "items": { "type": "string" } },
+                    "newlyExposedFacts": { "type": "array", "items": { "type": "string" } },
+                    "modelVisibleRequirementsAfterTurn": { "type": "array", "items": { "type": "string" } },
+                    "allowedNewFactsToExpose": { "type": "array", "items": { "type": "string" } }
+                  },
+                  "additionalProperties": true
+                },
+                "allowedAdaptiveMoves": { "type": "array", "items": { "type": "string" } },
+                "branchRules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["branchRuleId", "condition", "action", "modelFacingReply", "evaluatorNote"],
+                    "properties": {
+                      "branchRuleId": { "type": "string", "minLength": 1 },
+                      "condition": { "type": "string" },
+                      "action": { "type": "string" },
+                      "modelFacingReply": { "type": "string" },
+                      "evaluatorNote": { "type": "string" },
+                      "continueToTurn": { "type": "integer", "minimum": 1 }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "ifModelDrifts": { "type": "string" },
+                "ifModelAsksClarifyingQuestion": { "type": "string" },
+                "ifModelOverpromises": { "type": "string" },
+                "ifModelRefusesOrCannotAnswer": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "stopCondition": { "type": "string" },
+          "collectionBurden": { "enum": ["low", "medium", "high"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "rubricSuggestions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "dimensionId",
+          "dimensionState",
+          "appliesToCaseTypes",
+          "appliesToCaseTags",
+          "caseRefs",
+          "weightSuggestion",
+          "scoreScale",
+          "scoreAnchors",
+          "scoringMethod",
+          "positiveSignals",
+          "negativeSignals",
+          "redLineFailures",
+          "evidenceSources",
+          "evidenceRequired",
+          "judgeTypeSuggestion",
+          "judgePlan",
+          "uncertaintyPolicy",
+          "aggregationHint",
+          "humanOverridePolicy",
+          "confirmationBacklogRefs"
+        ],
+        "properties": {
+          "dimensionId": { "type": "string" },
+          "dimensionState": {
+            "enum": ["scored", "diagnostic_only", "baseline_insight_only", "disabled"]
+          },
+          "appliesToCaseTypes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "single_turn",
+                "scripted_multi_turn",
+                "adaptive_multi_turn",
+                "capability_probe",
+                "boundary_risk",
+                "regression_like"
+              ]
+            }
+          },
+          "appliesToCaseTags": { "type": "array", "items": { "type": "string" } },
+          "caseRefs": { "type": "array", "items": { "type": "string" } },
+          "weightSuggestion": { "type": "number", "minimum": 0, "maximum": 1 },
+          "scoreScale": { "type": "string" },
+          "scoreAnchors": {
+            "type": "object",
+            "required": ["high", "medium", "low"],
+            "properties": {
+              "high": { "type": "string" },
+              "medium": { "type": "string" },
+              "low": { "type": "string" }
+            },
+            "additionalProperties": true
+          },
+          "scoringMethod": { "type": "array", "items": { "type": "string" } },
+          "positiveSignals": { "type": "array", "items": { "type": "string" } },
+          "negativeSignals": { "type": "array", "items": { "type": "string" } },
+          "redLineFailures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["failureId", "description", "scoreCap", "appliesWhen", "evidenceRequired", "suggestedAction"],
+              "properties": {
+                "failureId": { "type": "string" },
+                "description": { "type": "string" },
+                "scoreCap": { "type": "number", "minimum": 0, "maximum": 5 },
+                "appliesWhen": { "type": "string" },
+                "evidenceRequired": { "type": "string" },
+                "suggestedAction": { "type": "string" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "evidenceSources": { "type": "array", "items": { "type": "string" } },
+          "evidenceRequired": { "type": "string" },
+          "judgeTypeSuggestion": { "type": "string" },
+          "judgePlan": {
+            "type": "object",
+            "required": ["primaryJudge", "fallbackJudge", "humanSamplingRecommendation", "calibrationNotes", "blindPairwiseRecommended"],
+            "properties": {
+              "primaryJudge": { "type": "string" },
+              "fallbackJudge": { "type": "string" },
+              "humanSamplingRecommendation": { "type": "string" },
+              "calibrationNotes": { "type": "string" },
+              "blindPairwiseRecommended": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          },
+          "uncertaintyPolicy": { "type": "string" },
+          "aggregationHint": { "type": "string" },
+          "humanOverridePolicy": { "type": "string" },
+          "confirmationBacklogRefs": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "reportSkeletonMetadata": {
+      "type": "object",
+      "required": [
+        "reportAudience",
+        "decisionMode",
+        "scoreboardDimensions",
+        "caseClusters",
+        "riskSections",
+        "baselineInsightSections",
+        "recommendedAppendices",
+        "rawArtifactLinks",
+        "humanOverrideFields"
+      ],
+      "properties": {
+        "reportAudience": { "type": "string" },
+        "decisionMode": { "type": "string" },
+        "scoreboardDimensions": { "type": "array", "items": { "type": "string" } },
+        "caseClusters": { "type": "array", "items": { "type": "string" } },
+        "riskSections": { "type": "array", "items": { "type": "string" } },
+        "baselineInsightSections": { "type": "array", "items": { "type": "string" } },
+        "recommendedAppendices": { "type": "array", "items": { "type": "string" } },
+        "rawArtifactLinks": { "type": "array", "items": { "type": "string" } },
+        "humanOverrideFields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "generationTrace": {
+      "type": "object",
+      "required": [
+        "generationRunId",
+        "artifactRefs"
+      ],
+      "properties": {
+        "generationRunId": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string" },
+        "inputSummary": { "type": "string" },
+        "artifactRefs": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "knownLimitations": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "selfCritiqueTrace": { "$ref": "eval-generation-critique.schema.json" },
+    "confirmationBacklog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "component",
+          "question",
+          "whyItMatters",
+          "recommendedDefault",
+          "severity",
+          "blocksEvalRun",
+          "status"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "component": {
+            "enum": [
+              "arenaEvalSpec",
+              "evalSetCoveragePlan",
+              "evalCases",
+              "turnScripts",
+              "rubricSuggestions",
+              "reportSkeletonMetadata",
+              "overall"
+            ]
+          },
+          "relatedObjectIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "question": { "type": "string", "minLength": 1 },
+          "whyItMatters": { "type": "string", "minLength": 1 },
+          "recommendedDefault": { "type": "string" },
+          "severity": { "enum": ["blocking", "important", "nice_to_have"] },
+          "blocksEvalRun": { "type": "boolean" },
+          "status": {
+            "enum": ["pending_user", "answered", "skipped", "auto_defaulted"]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

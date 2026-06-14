@@ -1,0 +1,26 @@
+{
+  "name": "sbs-4-any-agent",
+  "version": "0.1.0",
+  "description": "Local side-by-side evaluation workbench for comparing AI products in concrete task spaces.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "os": [
+    "darwin"
+  ],
+  "keywords": [
+    "ai-evals",
+    "sbs-evaluation",
+    "agent-eval",
+    "chatbot-eval",
+    "local-first"
+  ],
+  "scripts": {
+    "dev": "node server/index.mjs",
+    "desktop:dev": "bash scripts/desktop/open_dev_app.sh",
+    "desktop:run": "bash scripts/desktop/run_dev.sh",
+    "desktop:build": "bash scripts/desktop/build_dev.sh",
+    "desktop:release": "bash scripts/desktop/build_release_dmg.sh"
+  }
+}

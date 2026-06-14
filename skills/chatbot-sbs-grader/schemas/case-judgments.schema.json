@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CaseJudgmentSet",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifactType",
+    "taskId",
+    "packageId",
+    "runId",
+    "createdAt",
+    "scoringConfig",
+    "caseJudgments",
+    "qualityGateResults",
+    "traceRefs"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "CaseJudgmentSet" },
+    "taskId": { "type": "string" },
+    "packageId": { "type": "string" },
+    "runId": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "scoringConfig": {
+      "type": "object",
+      "required": ["caseScoreScale", "communicationFitState"],
+      "properties": {
+        "caseScoreScale": { "const": "1-5" },
+        "communicationFitState": { "enum": ["scored", "diagnostic_only", "disabled"] },
+        "aggregateScoreScale": { "const": "0-100" }
+      },
+      "additionalProperties": true
+    },
+    "caseJudgments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "caseId",
+          "caseType",
+          "caseImportance",
+          "gradeReadiness",
+          "dimensionJudgments",
+          "sideScores",
+          "pairwiseWinner",
+          "winnerConfidence",
+          "redLineCaps",
+          "failureTypes",
+          "evidenceRefs",
+          "inferenceChain",
+          "uncertainty"
+        ],
+        "properties": {
+          "caseId": { "type": "string" },
+          "caseType": { "type": "string" },
+          "caseImportance": { "enum": ["high", "medium", "low"] },
+          "gradeReadiness": { "enum": ["ready", "low_confidence", "needs_human_review", "blocked", "skipped"] },
+          "dimensionJudgments": { "type": "array", "items": { "$ref": "#/$defs/dimensionJudgment" } },
+          "sideScores": {
+            "type": "object",
+            "required": ["baseline", "challenger"],
+            "properties": {
+              "baseline": {
+                "anyOf": [
+                  { "type": "number", "minimum": 1, "maximum": 5 },
+                  { "type": "null" }
+                ]
+              },
+              "challenger": {
+                "anyOf": [
+                  { "type": "number", "minimum": 1, "maximum": 5 },
+                  { "type": "null" }
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "pairwiseWinner": { "enum": ["baseline", "challenger", "tie", "inconclusive", "not_scored"] },
+          "winnerConfidence": { "enum": ["high", "medium", "low", "none"] },
+          "redLineCaps": { "type": "array", "items": { "type": "object" } },
+          "failureTypes": { "type": "array", "items": { "type": "string" } },
+          "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+          "evidenceSnippets": { "type": "array", "items": { "$ref": "#/$defs/evidenceSnippet" } },
+          "inferenceChain": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "claim"],
+              "properties": {
+                "kind": { "enum": ["observed", "inferred", "normative"] },
+                "claim": { "type": "string" },
+                "evidenceRefs": { "type": "array", "items": { "type": "string" } }
+              },
+              "additionalProperties": true
+            }
+          },
+          "uncertainty": { "type": "array", "items": { "type": "string" } },
+          "humanOverrideSlot": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "qualityGateResults": { "type": "object" },
+    "traceRefs": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "dimensionJudgment": {
+      "type": "object",
+      "required": [
+        "dimensionId",
+        "dimensionState",
+        "baselineScore",
+        "challengerScore",
+        "pairwiseWinner",
+        "rationale",
+        "evidenceRefs"
+      ],
+      "properties": {
+        "dimensionId": { "type": "string" },
+        "dimensionState": { "enum": ["scored", "diagnostic_only", "baseline_insight_only", "disabled"] },
+        "baselineScore": { "type": "number", "minimum": 1, "maximum": 5 },
+        "challengerScore": { "type": "number", "minimum": 1, "maximum": 5 },
+        "pairwiseWinner": { "enum": ["baseline", "challenger", "tie", "inconclusive", "not_scored"] },
+        "rationale": { "type": "string" },
+        "evidenceRefs": { "type": "array", "items": { "type": "string" } },
+        "evidenceSnippets": { "type": "array", "items": { "$ref": "#/$defs/evidenceSnippet" } },
+        "uncertainty": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "evidenceSnippet": {
+      "type": "object",
+      "required": ["caseId", "side", "field", "quote", "whyItMatters"],
+      "properties": {
+        "caseId": { "type": "string" },
+        "turnIndex": { "type": "number" },
+        "side": { "enum": ["baseline", "challenger"] },
+        "field": { "type": "string" },
+        "quote": { "type": "string" },
+        "whyItMatters": { "type": "string" },
+        "evidenceRef": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

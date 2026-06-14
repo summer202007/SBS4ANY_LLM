@@ -1,0 +1,5 @@
+name: chatbot-sbs-grader
+display_name: Chatbot SBS Grader
+short_description: Clean collected SBS evidence, grade chatbot outputs, and produce PM-ready reports.
+default_prompt: Clean and grade this SBS chatbot run, then generate an evidence-grounded report.
+

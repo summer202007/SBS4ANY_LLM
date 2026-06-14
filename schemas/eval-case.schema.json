@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GeneratedEvalSet",
+  "type": "object",
+  "required": ["cases"],
+  "properties": {
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "taskSpace",
+          "caseType",
+          "status",
+          "source",
+          "title",
+          "scenario",
+          "turns",
+          "capabilityTargets",
+          "expectedOutcome",
+          "evaluationRubric",
+          "failureModes",
+          "difficulty",
+          "evidenceLevelRequired"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "taskSpace": { "type": "string" },
+          "caseType": { "enum": ["single_turn", "multi_turn"] },
+          "status": { "enum": ["draft"] },
+          "source": { "enum": ["generated"] },
+          "title": { "type": "string" },
+          "userPersona": { "type": "string" },
+          "scenario": { "type": "string" },
+          "turns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "turnIndex", "totalTurns", "userPrompt"],
+              "properties": {
+                "id": { "type": "string" },
+                "turnIndex": { "type": "integer", "minimum": 1 },
+                "totalTurns": { "type": "integer", "minimum": 1 },
+                "userPrompt": { "type": "string" },
+                "contextNote": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "capabilityTargets": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "expectedOutcome": { "type": "string" },
+          "evaluationRubric": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["dimension", "description", "weightSuggestion"],
+              "properties": {
+                "dimension": { "type": "string" },
+                "description": { "type": "string" },
+                "weightSuggestion": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "failureModes": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "difficulty": { "enum": ["easy", "medium", "hard"] },
+          "evidenceLevelRequired": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SBS 4 Any Agent</title>
+    <link rel="icon" href="/assets/generated/sbs-prism-app-icon-256.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/generated/sbs-prism-app-icon-256.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-lockup">
+        <img class="brand-mark" src="/assets/generated/sbs-prism-app-icon-256.png" alt="" aria-hidden="true" />
+        <div>
+          <p class="eyebrow">Local SBS Workbench</p>
+          <h1>SBS 4 Any Agent</h1>
+        </div>
+      </div>
+      <div class="header-actions"></div>
+    </header>
+
+    <main id="appLayout" class="app-layout">
+      <nav class="side-nav" aria-label="Workbench views">
+        <button class="nav-item active nav-primary" data-view="tasks" type="button">Tasks</button>
+        <button id="backToTasks" class="secondary-button back-button nav-task" type="button">Back to Tasks</button>
+        <button class="nav-item nav-task" data-view="package" type="button">Package</button>
+        <button class="nav-item nav-task" data-view="cases" type="button">Cases</button>
+        <button class="nav-item nav-task" data-view="collect" type="button">Collect</button>
+        <button class="nav-item nav-task" data-view="review" type="button">Review</button>
+        <button class="nav-item nav-task" data-view="report" type="button">Report</button>
+      </nav>
+
+      <section class="workspace">
+        <div id="statusBar" class="status-bar">Checking local server...</div>
+        <div id="viewRoot"></div>
+      </section>
+    </main>
+
+    <dialog id="confirmDialog" class="modal confirm-modal">
+      <form method="dialog">
+        <div class="modal-heading">
+          <h3 id="confirmTitle">Confirm action</h3>
+        </div>
+        <p id="confirmMessage" class="confirm-message"></p>
+        <div class="modal-actions">
+          <button id="confirmCancel" class="secondary-button" value="cancel" type="submit">Cancel</button>
+          <button id="confirmOk" class="primary-button" value="ok" type="submit">Continue</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

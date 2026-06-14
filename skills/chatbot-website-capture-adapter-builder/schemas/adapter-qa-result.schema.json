@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chatbot Capture Adapter QA Result",
+  "type": "object",
+  "required": ["ok", "adapterReadiness", "fieldResults", "blockingIssues", "warnings", "developerInstructions"],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "adapterReadiness": {
+      "type": "string",
+      "enum": ["ready", "partial", "blocked"]
+    },
+    "fieldResults": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["pass", "warn", "unsupported", "fail_missing_visible_field", "fail_wrong_turn", "fail_polluted", "fail_invalid_type", "fail_empty"]
+      }
+    },
+    "blockingIssues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "code", "message"],
+        "properties": {
+          "field": { "type": "string" },
+          "code": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "developerInstructions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

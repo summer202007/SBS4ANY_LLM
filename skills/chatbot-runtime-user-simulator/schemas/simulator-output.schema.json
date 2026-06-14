@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "caseId",
+    "currentTurnIndex",
+    "evalPackageVersion",
+    "selectedAction",
+    "selectedBranchRuleId",
+    "modelFacingUserMessage",
+    "evaluatorNote",
+    "newlyExposedFacts",
+    "updatedTrackedState",
+    "shouldStop",
+    "stopReason",
+    "trajectoryNotes"
+  ],
+  "properties": {
+    "caseId": { "type": "string" },
+    "currentTurnIndex": { "type": "integer", "minimum": 1 },
+    "evalPackageVersion": { "type": "string" },
+    "selectedAction": {
+      "type": "string",
+      "enum": ["select_branch_rule", "allowed_adaptive_move", "needs_human_review", "stop"]
+    },
+    "selectedBranchRuleId": { "type": "string" },
+    "modelFacingUserMessage": { "type": "string" },
+    "evaluatorNote": { "type": "string" },
+    "newlyExposedFacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "updatedTrackedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "shouldStop": { "type": "boolean" },
+    "stopReason": { "type": "string" },
+    "trajectoryNotes": { "type": "string" }
+  }
+}

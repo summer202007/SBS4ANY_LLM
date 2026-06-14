@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CleanedEvidencePackage",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "artifactType",
+    "taskId",
+    "packageId",
+    "runId",
+    "createdAt",
+    "inputRefs",
+    "coverageSummary",
+    "providerCapabilityProfiles",
+    "caseEvidence",
+    "cleaningFindings",
+    "humanReviewQueue",
+    "qualityGateResults",
+    "traceRefs"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "artifactType": { "const": "CleanedEvidencePackage" },
+    "taskId": { "type": "string" },
+    "packageId": { "type": "string" },
+    "runId": { "type": "string" },
+    "createdAt": { "type": "string" },
+    "inputRefs": {
+      "type": "object",
+      "required": ["packageRef", "runRef"],
+      "properties": {
+        "packageRef": { "type": "string" },
+        "runRef": { "type": "string" },
+        "curationRef": { "type": "string" },
+        "providerProfileRefs": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "coverageSummary": {
+      "type": "object",
+      "required": ["packageCaseCount", "collectedCaseCount", "missingCaseIds", "caseTypeCoverage", "coverageStatus"],
+      "properties": {
+        "packageCaseCount": { "type": "integer", "minimum": 0 },
+        "collectedCaseCount": { "type": "integer", "minimum": 0 },
+        "missingCaseIds": { "type": "array", "items": { "type": "string" } },
+        "caseTypeCoverage": { "type": "object" },
+        "coverageStatus": { "enum": ["complete", "partial", "insufficient"] },
+        "coverageCaveats": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "providerCapabilityProfiles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["providerName", "side", "captureMode", "exposedEvidenceChannels"],
+        "properties": {
+          "providerName": { "type": "string" },
+          "side": { "enum": ["baseline", "challenger"] },
+          "captureMode": { "type": "string" },
+          "exposedEvidenceChannels": { "type": "array", "items": { "type": "string" } },
+          "knownLimitations": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    },
+    "caseEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["caseId", "caseType", "status", "turnEvidence"],
+        "properties": {
+          "caseId": { "type": "string" },
+          "caseType": { "type": "string" },
+          "status": { "enum": ["ready", "low_confidence", "needs_human_review", "blocked", "missing"] },
+          "caseFindings": { "type": "array", "items": { "type": "object" } },
+          "turnEvidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["turnIndex", "userMessage", "sides"],
+              "properties": {
+                "turnIndex": { "type": "integer", "minimum": 1 },
+                "userMessage": { "type": "string" },
+                "newlyExposedFacts": { "type": "array", "items": { "type": "string" } },
+                "simulatorNotes": { "type": "array", "items": { "type": "object" } },
+                "sides": {
+                  "type": "object",
+                  "required": ["baseline", "challenger"],
+                  "properties": {
+                    "baseline": { "$ref": "#/$defs/sideEvidence" },
+                    "challenger": { "$ref": "#/$defs/sideEvidence" }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "cleaningFindings": { "type": "array", "items": { "type": "object" } },
+    "humanReviewQueue": { "type": "array", "items": { "type": "object" } },
+    "qualityGateResults": { "type": "object" },
+    "traceRefs": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "evidenceItem": {
+      "type": "object",
+      "required": ["type", "text", "rawField"],
+      "properties": {
+        "type": { "type": "string" },
+        "text": { "type": "string" },
+        "rawField": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "supportsClaims": { "enum": ["yes", "partial", "no", "unknown"] },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "sideEvidence": {
+      "type": "object",
+      "required": [
+        "side",
+        "providerName",
+        "cleanFinalOutput",
+        "productVisibleProcess",
+        "intentExpansionEvidence",
+        "sourceEvidence",
+        "followupSuggestions",
+        "riskNotices",
+        "toolOrExecutionEvidence",
+        "captureNotes",
+        "removedNoise",
+        "suspectedContamination",
+        "unsupportedClaims",
+        "evidenceCompleteness",
+        "gradeReadiness",
+        "confidence",
+        "humanReviewHints"
+      ],
+      "properties": {
+        "side": { "enum": ["baseline", "challenger"] },
+        "providerName": { "type": "string" },
+        "cleanFinalOutput": { "type": "string" },
+        "productVisibleProcess": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "intentExpansionEvidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "sourceEvidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "followupSuggestions": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "riskNotices": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "toolOrExecutionEvidence": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "captureNotes": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "removedNoise": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "suspectedContamination": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "unsupportedClaims": { "type": "array", "items": { "$ref": "#/$defs/evidenceItem" } },
+        "evidenceCompleteness": { "enum": ["complete", "partial", "minimal", "missing"] },
+        "gradeReadiness": { "enum": ["ready", "low_confidence", "needs_human_review", "blocked"] },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "humanReviewHints": { "type": "array", "items": { "type": "string" } },
+        "rawRefs": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
+
