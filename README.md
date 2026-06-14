@@ -345,12 +345,12 @@ For normal users, the easiest path is the macOS app.
 
 对一般用户来说，最简单的方式是直接使用 macOS App。
 
-1. Download the latest `.dmg` from GitHub Releases.
+1. Download the latest `.dmg` from [GitHub Releases](https://github.com/summer202007/SBS4ANY_LLM/releases/latest).
 2. Open the DMG and drag `SBS 4 Any Agent.app` into Applications.
 3. Launch the app.
 4. Create an evaluation task and follow the workbench flow.
 
-1. 从 GitHub Releases 下载最新 `.dmg`。
+1. 从 [GitHub Releases](https://github.com/summer202007/SBS4ANY_LLM/releases/latest) 下载最新 `.dmg`。
 2. 打开 DMG，把 `SBS 4 Any Agent.app` 拖到 Applications。
 3. 启动 App。
 4. 创建评测任务，然后按工作台流程完成测评。
