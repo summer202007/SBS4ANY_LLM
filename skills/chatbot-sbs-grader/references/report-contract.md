@@ -72,7 +72,7 @@ Important: this app-facing constraint does **not** apply to the full markdown/PD
 
 ## PDF / Markdown Report Structure
 
-The product UI should export a polished PDF. The quality bar is a PM memo-style report exported to PDF: clean hierarchy, readable tables, stable pagination, compact but complete analysis, and enough granularity for portfolio review.
+The product UI should export a polished PDF. The quality bar is a PM memo-style report exported to PDF: clean hierarchy, readable tables, stable pagination, compact but complete analysis, and enough granularity for stakeholder review.
 
 Do not treat browser page printing, screenshots, or raw app-page print dialogs as acceptable final PDF export. A temporary debug preview may exist, but the product-facing download must be a generated report document/PDF artifact.
 

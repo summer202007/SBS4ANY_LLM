@@ -212,7 +212,7 @@ Use for:
 - current product default;
 - manageable human review;
 - first real SBS comparison;
-- portfolio-quality demo.
+- demo-quality run.
 
 This is the short-term upper bound unless the user explicitly overrides.
 
