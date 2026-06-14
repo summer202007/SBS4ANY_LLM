@@ -4,14 +4,6 @@
 
 # SBS 4 Any Agent
 
-<p align="center">
-  <a href="https://github.com/summer202007/SBS4ANY_LLM/releases/latest"><strong>Download macOS App</strong></a>
-  ·
-  <a href="examples/job-interview-xiaohongshu-vs-doubao/report.en.md"><strong>View Sample Report</strong></a>
-  ·
-  <a href="#optional-install-the-skills-into-codex--可选把-skills-安装到-codex"><strong>Install Codex Skills</strong></a>
-</p>
-
 **Find out whether an AI product actually beats the strongest baseline in a concrete task space.**
 
 **判断一个 AI 产品在具体任务空间里，是否真的打过最强基线产品。**
@@ -27,15 +19,15 @@ SBS 4 Any Agent 是一个面向 AI Chat 产品的本地 Side-by-Side 评测工�
 </p>
 
 <p align="center">
-  <a href="https://github.com/summer202007/SBS4ANY_LLM/releases/latest">Download macOS App</a>
+  <a href="https://github.com/summer202007/SBS4ANY_LLM/releases/latest"><strong>Download macOS App</strong></a>
   ·
-  <a href="examples/job-interview-xiaohongshu-vs-doubao/report.en.md">View Sample Report EN</a>
+  <a href="examples/job-interview-xiaohongshu-vs-doubao/report.en.md"><strong>View Sample Report EN</strong></a>
   ·
-  <a href="examples/job-interview-xiaohongshu-vs-doubao/report.zh.md">查看中文报告</a>
+  <a href="examples/job-interview-xiaohongshu-vs-doubao/report.zh.md"><strong>查看中文报告</strong></a>
   ·
-  <a href="#optional-install-the-skills-into-codex--可选把-skills-安装到-codex">Install Codex Skills</a>
+  <a href="#optional-install-the-skills-into-codex--可选把-skills-安装到-codex"><strong>Install Codex Skills</strong></a>
   ·
-  <a href="docs/extending-skills.md">Extension Guide</a>
+  <a href="docs/extending-skills.md"><strong>Extension Guide</strong></a>
 </p>
 
 <p align="center">
