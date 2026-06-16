@@ -41,6 +41,23 @@ Handle both historical run shapes:
 - map-style `caseRuns` object;
 - array-style `caseRuns` list.
 
+Never call array methods such as `.find`, `.map`, or `.filter` directly on raw
+`run.caseRuns`. Normalize first:
+
+```js
+const caseRuns = Array.isArray(run.caseRuns)
+  ? run.caseRuns
+  : Object.values(run.caseRuns || {});
+```
+
+If keyed lookup is needed, preserve a separate object index:
+
+```js
+const caseRunById = Array.isArray(run.caseRuns)
+  ? Object.fromEntries(run.caseRuns.map((item) => [item.caseId, item]))
+  : (run.caseRuns || {});
+```
+
 Handle both turn field shapes:
 
 - flat fields such as `baselineOutput`, `challengerOutput`, `baselineVisibleProcessNotes`;

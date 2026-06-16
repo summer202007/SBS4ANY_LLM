@@ -1,0 +1,27 @@
+{
+  "ok": false,
+  "errors": [
+    "turn script case-005-b2b-pricing-strategy-discussion runtimeStateTemplate.outputFields missing simulator output fields: selectedBranchRuleId",
+    "turn script case-005-b2b-pricing-strategy-discussion harnessExecutionContract.replayLogFields missing fields: simulator_output",
+    "turn script case-006-ev-brand-channel-strategy runtimeStateTemplate.outputFields missing simulator output fields: selectedAction, selectedBranchRuleId",
+    "turn script case-006-ev-brand-channel-strategy harnessExecutionContract.replayLogFields missing fields: simulator_output",
+    "turn script case-007-private-hospital-growth runtimeStateTemplate.outputFields missing simulator output fields: selectedAction, selectedBranchRuleId",
+    "turn script case-007-private-hospital-growth harnessExecutionContract.replayLogFields missing fields: simulator_output"
+  ],
+  "schemaErrors": [],
+  "consistencyErrors": [
+    "turn script case-005-b2b-pricing-strategy-discussion runtimeStateTemplate.outputFields missing simulator output fields: selectedBranchRuleId",
+    "turn script case-005-b2b-pricing-strategy-discussion harnessExecutionContract.replayLogFields missing fields: simulator_output",
+    "turn script case-006-ev-brand-channel-strategy runtimeStateTemplate.outputFields missing simulator output fields: selectedAction, selectedBranchRuleId",
+    "turn script case-006-ev-brand-channel-strategy harnessExecutionContract.replayLogFields missing fields: simulator_output",
+    "turn script case-007-private-hospital-growth runtimeStateTemplate.outputFields missing simulator output fields: selectedAction, selectedBranchRuleId",
+    "turn script case-007-private-hospital-growth harnessExecutionContract.replayLogFields missing fields: simulator_output"
+  ],
+  "warnings": [],
+  "stats": {
+    "caseCount": 15,
+    "turnScriptCount": 5,
+    "rubricCount": 6,
+    "validationMode": "local"
+  }
+}

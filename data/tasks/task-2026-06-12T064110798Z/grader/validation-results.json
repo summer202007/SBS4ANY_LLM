@@ -1,0 +1,186 @@
+{
+  "createdAt": "2026-06-13T06:58:14.758Z",
+  "inputHash": "34a1ab160181e55605f667cb3660cb9f47e9ca490698ad5c614b824781c2316f",
+  "preclean": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "top-level contract",
+      "case/turn/side presence",
+      "grade readiness enums",
+      "evidence channel array shape",
+      "missing final output warnings"
+    ],
+    "errors": [],
+    "warnings": [
+      "Missing cases: jobint-mt-010, jobint-mt-011"
+    ],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-12T064110798Z/grader/cleaned-evidence.preclean.json"
+  },
+  "cleanedEvidence": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "top-level contract",
+      "case/turn/side presence",
+      "grade readiness enums",
+      "evidence channel array shape",
+      "missing final output warnings"
+    ],
+    "errors": [],
+    "warnings": [
+      "Missing cases: jobint-mt-010, jobint-mt-011"
+    ],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-12T064110798Z/grader/cleaned-evidence.json"
+  },
+  "caseJudgments": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "case judgment shape",
+      "score ranges",
+      "winner enums",
+      "not-scored case handling",
+      "evidence ref arrays",
+      "evidence snippet presence"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-12T064110798Z/grader/case-judgments.json"
+  },
+  "gradingReport": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "report top-level shape",
+      "verdict enum",
+      "dual verdicts",
+      "side overall conclusions",
+      "overall score completeness",
+      "directional score caveat",
+      "score scale",
+      "scoreboard row completeness",
+      "not-scored case handling",
+      "key evidence snippets",
+      "optimization plan presence"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-12T064110798Z/grader/grading-report.json"
+  },
+  "reportMarkdown": {
+    "ok": true,
+    "checkerType": "memo_quality_checker",
+    "coverage": [
+      "memo length",
+      "title",
+      "executive summary",
+      "methodology and directional score caveat",
+      "scoreboard with overall row",
+      "dedicated key reasons",
+      "key evidence excerpts",
+      "priority-grouped optimization",
+      "case breakdown",
+      "red lines",
+      "case table",
+      "caveats"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-12T064110798Z/grader/report.zh.md"
+  },
+  "cleanManifest": {
+    "ok": true,
+    "stage": "evidence_cleaning_only",
+    "artifactRefs": {
+      "cleanedEvidence": "data/tasks/task-2026-06-12T064110798Z/grader/cleaned-evidence.json",
+      "cleaningSummary": "data/tasks/task-2026-06-12T064110798Z/grader/cleaning-summary.md",
+      "invocationTrace": "data/tasks/task-2026-06-12T064110798Z/grader/invocation-trace.clean.json"
+    },
+    "summary": {
+      "artifactType": "CleanedEvidencePackage",
+      "taskId": "task-2026-06-12T064110798Z",
+      "packageId": "sbs-chatbot-evalgen-2026-06-12-job-interview-experience",
+      "runId": "run-2026-06-12T065215994Z",
+      "coverageStatus": "partial",
+      "packageCaseCount": 15,
+      "collectedCaseCount": 13,
+      "readyCases": 11,
+      "lowConfidenceCases": 2,
+      "missingCases": 2,
+      "turns": 19,
+      "sideTurns": 38,
+      "validationStatus": "pass_with_warnings"
+    },
+    "caveats": [
+      "Missing collected cases: jobint-mt-010, jobint-mt-011.",
+      "No substantive human review state was found in run.manualReviews.",
+      "Unsupported-claim candidates are evidence-cleaning flags for downstream inspection, not final grading judgments.",
+      "Raw run/package/preclean artifacts were preserved; cleaning output is derived only."
+    ]
+  },
+  "reportManifest": {
+    "ok": true,
+    "stage": "full_case_judgments_aggregation_quality_audit_pm_report",
+    "artifactRefs": {
+      "caseJudgments": "data/tasks/task-2026-06-12T064110798Z/grader/case-judgments.json",
+      "gradingReport": "data/tasks/task-2026-06-12T064110798Z/grader/grading-report.json",
+      "qualityAudit": "data/tasks/task-2026-06-12T064110798Z/grader/grader-quality-audit.json",
+      "reportMarkdown": "data/tasks/task-2026-06-12T064110798Z/grader/report.md",
+      "reportZhMarkdown": "data/tasks/task-2026-06-12T064110798Z/grader/report.zh.md",
+      "invocationTrace": "data/tasks/task-2026-06-12T064110798Z/grader/invocation-trace.report.json"
+    },
+    "verdictSummary": {
+      "verdict": "baseline_wins",
+      "winner": "Doubao",
+      "confidence": "medium",
+      "baselineOverallConclusion": "Doubao is stronger overall on core interview-preparation execution, multi-turn constraint carryover, and granular ability decomposition, but has serious trust/safety caveats.",
+      "challengerOverallConclusion": "小红书点点 shows a meaningful safety/privacy niche, especially in fabrication refusal and 婚育隐私 handling, but loses overall due to weaker executable depth and context drift.",
+      "overallScores": {
+        "baseline": 76,
+        "challenger": 65
+      },
+      "coverage": {
+        "packageCases": 15,
+        "collectedCases": 13,
+        "missingCaseIds": [
+          "jobint-mt-010",
+          "jobint-mt-011"
+        ]
+      }
+    },
+    "validationHints": {
+      "status": "pass",
+      "validatedArtifacts": [
+        "case-judgments.json",
+        "grading-report.json",
+        "report.zh.md",
+        "report.md"
+      ],
+      "traceStamped": true
+    },
+    "caveats": [
+      "Two scripted multi-turn cases were missing and excluded from scoring: jobint-mt-010, jobint-mt-011.",
+      "No substantive manual review state was found in run.manualReviews.",
+      "jobint-mt-008 and jobint-br-014 were marked low_confidence by evidence cleaning and should be human spot-checked.",
+      "Challenger evidence is mostly final-output-only, so hidden app/source behavior was not inferred.",
+      "Communication fit was diagnostic_only and did not drive the final winner."
+    ]
+  },
+  "reportRepairManifest": null,
+  "manualMigration": {
+    "updatedAt": "2026-06-13T10:40:00.934Z",
+    "reason": "Applied grader contract fix for not-scored case N/A, directional scores, dual verdicts, and key evidence snippets.",
+    "touchedArtifacts": [
+      "case-judgments.json",
+      "grading-report.json"
+    ],
+    "revalidatedAt": "2026-06-13T10:44:11.641Z",
+    "pdfRegenerated": true
+  }
+}

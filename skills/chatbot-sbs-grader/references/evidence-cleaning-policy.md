@@ -13,7 +13,9 @@ The cleaner must separate product behavior from capture artifacts before any sco
 The current interview run exposed these concrete patterns:
 
 - Run data may use flat fields such as `baselineOutput`, `challengerOutput`, `baselineVisibleProcessNotes`, not nested `sides`.
-- `caseRuns` may be an object keyed by `caseId`, not an array.
+- `caseRuns` may be an object keyed by `caseId`, not an array. Never call
+  `.find`, `.map`, or `.filter` directly on raw `run.caseRuns`; normalize it
+  first with `Array.isArray(run.caseRuns) ? run.caseRuns : Object.values(run.caseRuns || {})`.
 - Doubao source notes may be only `Captured from: https://www.doubao.com/chat/...`; this proves page provenance but not claim support.
 - Doubao visible process notes may include risk notices and follow-up suggestions, not internal thinking.
 - Doubao intent/query expansion can be useful, noisy, or unrelated; do not automatically reward it.

@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 export const rootDir = process.cwd();
@@ -203,6 +203,36 @@ export function selectEvaluationTask(taskId) {
   return getCurrentState();
 }
 
+export function deleteEvaluationTask(taskId) {
+  ensureDataDirs();
+  const tasks = readTasksIndex();
+  const task = tasks.items.find((item) => item.taskId === taskId);
+  if (!task) throw new Error(`Unknown taskId: ${taskId}`);
+  if (task.showcase?.type === "real_completed_run") {
+    throw new Error("Built-in showcase tasks cannot be deleted.");
+  }
+
+  const nextItems = tasks.items.filter((item) => item.taskId !== taskId);
+  const now = new Date().toISOString();
+  tasks.items = nextItems;
+  tasks.updatedAt = now;
+  writeJson(paths.tasksIndex, tasks);
+
+  const scoped = activeTaskWorkspacePaths(taskId);
+  if (scoped?.taskRoot && existsSync(scoped.taskRoot)) {
+    rmSync(scoped.taskRoot, { recursive: true, force: true });
+  }
+
+  const activeTaskId = readJson(paths.activeTask)?.taskId || null;
+  if (activeTaskId === taskId) {
+    const nextActiveTaskId = nextItems[0]?.taskId || null;
+    writeJson(paths.activeTask, { taskId: nextActiveTaskId, updatedAt: now });
+    if (!nextActiveTaskId) resetGlobalWorkspace();
+  }
+
+  return getCurrentState();
+}
+
 function updateActiveTask(patch, taskId = readJson(paths.activeTask)?.taskId) {
   if (!taskId) return;
   const tasks = readTasksIndex();
@@ -263,6 +293,7 @@ function sanitizeEvaluationTask(task) {
       : "setup",
     arena: {
       productType,
+      localCodexModel: sanitizeLocalCodexModel(arena.localCodexModel),
       baseline: {
         name: String(baseline.name || "Doubao").trim(),
         surface: sanitizeSurface(baseline.surface || "web_chat"),
@@ -317,6 +348,10 @@ function sanitizeTaskCaptureTemplate(template = {}) {
     boundFromCaseId: String(template.boundFromCaseId || "").trim(),
     boundFromTurnIndex: Number(template.boundFromTurnIndex || 1),
   };
+}
+
+function sanitizeLocalCodexModel(value) {
+  return ["gpt-5.4", "gpt-5.5"].includes(value) ? value : "gpt-5.5";
 }
 
 function buildDecisionQuestion(challengerName, baselineName, taskSpaceLabel) {
@@ -1155,6 +1190,15 @@ function ensurePackageArtifacts(runtimePackage, metadata = {}) {
       writeFileSync(globalArtifactPath, String(content || ""), "utf8");
     }
   }
+}
+
+function resetGlobalWorkspace() {
+  writeJson(paths.activeProject, null);
+  writeJson(paths.currentPackage, null);
+  writeJson(paths.packageValidation, null);
+  writeJson(paths.curation, null);
+  writeJson(paths.currentRun, null);
+  writeFileSync(paths.currentReport, "", "utf8");
 }
 
 function ensureArtifactRef(runtimePackage, objectKey, refKey, ref) {

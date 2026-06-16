@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-VERSION="${SBS_VERSION:-0.1.0}"
+VERSION="${SBS_VERSION:-1.0.0}"
 BUILD_ID="${SBS_BUILD_ID:-$(date -u '+%Y%m%d%H%M%S')}"
 APP_NAME="SBS 4 Any Agent"
 RELEASE_DIR="$ROOT_DIR/.build/release"
@@ -63,7 +63,11 @@ copy_file "AGENTS.md" "$RUNTIME_DIR/AGENTS.md"
 # after first launch, not inside the signed app bundle.
 mkdir -p "$RUNTIME_DIR/data/adapters" "$RUNTIME_DIR/data/tasks" "$RUNTIME_DIR/data/packages" "$RUNTIME_DIR/data/runs" "$RUNTIME_DIR/data/reports" "$RUNTIME_DIR/data/curation"
 copy_file "data/adapters/index.json" "$RUNTIME_DIR/data/adapters/index.json"
-printf '{"items":[],"updatedAt":null}\n' > "$RUNTIME_DIR/data/tasks/index.json"
+if [ -d "$ROOT_DIR/seed-data/featured-demo/tasks" ]; then
+  copy_dir "seed-data/featured-demo/tasks" "$RUNTIME_DIR/data/tasks"
+else
+  printf '{"items":[],"updatedAt":null}\n' > "$RUNTIME_DIR/data/tasks/index.json"
+fi
 
 printf "%s\n" "$VERSION-$BUILD_ID" > "$RESOURCES_DIR/app-runtime-version.txt"
 if [ -f "$ROOT_DIR/web/assets/generated/SBSPrism.icns" ]; then

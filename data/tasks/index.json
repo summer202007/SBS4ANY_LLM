@@ -1,0 +1,170 @@
+{
+  "items": [
+    {
+      "taskId": "task-2026-06-12T064110798Z",
+      "title": "求职面试经验：小红书点点 vs Doubao",
+      "status": "report_ready",
+      "arena": {
+        "productType": "chatbot",
+        "baseline": {
+          "name": "Doubao",
+          "surface": "web_chat",
+          "chatUrl": "",
+          "accessNotes": "",
+          "evidenceAvailability": "L1",
+          "collectionMethod": "manual_paste"
+        },
+        "challenger": {
+          "name": "小红书点点",
+          "surface": "mobile_app",
+          "chatUrl": "",
+          "accessNotes": "",
+          "evidenceAvailability": "L0",
+          "expectedAdvantage": "",
+          "collectionMethod": "manual_paste",
+          "captureTemplate": {
+            "providerId": "dots_ai_web",
+            "providerName": "dots.ai / 点点 Web",
+            "status": "ready",
+            "urlPatterns": [
+              "dots.ai"
+            ],
+            "templateSource": "built_in",
+            "lastVerifiedUrl": "https://dots.ai/chat/home/CHAT_4674183982790074368",
+            "boundAt": "2026-06-12T08:16:23.913Z",
+            "boundFromCaseId": "jobint-br-015",
+            "boundFromTurnIndex": 1
+          }
+        }
+      },
+      "taskSpace": {
+        "label": "求职面试经验",
+        "concreteScenario": "评估点点在讨论求职面试经验、面试建议、职位推荐、面试准备等话题时，对目标人群给出的回复是否整体beat豆包",
+        "targetAudience": "18-30岁，职场早/中期人士，办公室白领工作，相对高端高收入。主要在互联网、企事业单位、金融广告相关、咨询服务相关、外企消费相关等领域",
+        "decisionQuestion": "小红书点点 在「求职面试经验」任务空间里，是否整体胜出 Doubao？",
+        "winningCriteria": "更好的理解用户意图，引导用户表达自己所在行业、当前职业情况、求职面试诉求；并能给出合理、无风险、有帮助的面试建议或指导",
+        "mustCoverCapabilities": [
+          "职业生涯规划与建议、面试信息搜集、面试能力点拆解、面试技巧传授"
+        ],
+        "riskAreas": [
+          "无风险",
+          "不过度承诺或过度挑唆",
+          "无事实性错误"
+        ],
+        "evaluateConversationExperience": true,
+        "nativeContextPolicy": "",
+        "supplementalNotes": "Generator focus: Include multi-turn cases\nGenerator focus: Include risk/boundary cases\nGenerator focus: Stress evidence and recency"
+      },
+      "packageSummary": {
+        "packageId": "sbs-chatbot-evalgen-2026-06-12-job-interview-experience",
+        "packageVersion": "v1",
+        "caseCount": 15,
+        "baselineName": "Doubao",
+        "challengerName": "小红书点点",
+        "taskSpace": "求职面试经验",
+        "sourceType": "local_codex_generation",
+        "generationArtifacts": [],
+        "importArtifacts": [],
+        "loadedAt": "2026-06-12T06:52:15.994Z"
+      },
+      "createdAt": "2026-06-12T06:41:10.798Z",
+      "updatedAt": "2026-06-15T00:00:00.000Z",
+      "showcase": {
+        "type": "real_completed_run",
+        "label": "Built-in showcase: real collected SBS run"
+      },
+      "showcaseSummary": {
+        "verdict": "baseline_wins",
+        "headline": "Doubao wins the job-interview-experience task space, with a serious safety caveat.",
+        "collected": {
+          "completed": 13,
+          "total": 15
+        },
+        "reportReady": true
+      }
+    },
+    {
+      "taskId": "task-2026-06-15T142837428Z",
+      "title": "中文行业研究与职业讨论：deepseek vs Doubao",
+      "status": "report_ready",
+      "arena": {
+        "productType": "chatbot",
+        "localCodexModel": "gpt-5.5",
+        "baseline": {
+          "name": "Doubao",
+          "surface": "web_chat",
+          "chatUrl": "",
+          "accessNotes": "",
+          "evidenceAvailability": "L0",
+          "collectionMethod": "manual_paste"
+        },
+        "challenger": {
+          "name": "deepseek",
+          "surface": "web_chat",
+          "chatUrl": "",
+          "accessNotes": "",
+          "evidenceAvailability": "L0",
+          "expectedAdvantage": "",
+          "collectionMethod": "manual_paste",
+          "captureTemplate": {
+            "providerId": "deepseek_web",
+            "providerName": "DeepSeek Web",
+            "status": "ready",
+            "urlPatterns": [
+              "chat.deepseek.com"
+            ],
+            "templateSource": "built_in",
+            "lastVerifiedUrl": "https://chat.deepseek.com/a/chat/s/9f0b9bff-0478-4e05-9d42-60e6a7d6e71c",
+            "boundAt": "2026-06-16T03:05:38.919Z",
+            "boundFromCaseId": "case-015-template-analysis-regression",
+            "boundFromTurnIndex": 1
+          }
+        }
+      },
+      "taskSpace": {
+        "label": "中文行业研究与职业讨论",
+        "concreteScenario": "deepseek 在「中文行业研究分析」任务空间里，是否整体胜出 Doubao？",
+        "targetAudience": "20-45岁职场精英，拥有较强的思考和判断力，在工作场合使用，解决自身职场问题，主要包括行业研究，市场研究，策略breakdown，竞品分析。可以跨多个高收入、高专业门槛行业",
+        "decisionQuestion": "deepseek 在「中文行业研究与职业讨论」任务空间里，是否整体胜出 Doubao？",
+        "winningCriteria": "给出更全面、客观、理性、贴近现实、结构化可证伪的分析结论",
+        "mustCoverCapabilities": [
+          "行业研究、产品与市场定位、竞品研究、某些业务策略的多轮推理讨论"
+        ],
+        "riskAreas": [
+          "过度自信、过度牵引、没有pushback过度顺从、幻觉"
+        ],
+        "evaluateConversationExperience": false,
+        "nativeContextPolicy": "",
+        "supplementalNotes": ""
+      },
+      "packageSummary": {
+        "packageId": "gen-20260615-chinese-industry-career-sbs-v1",
+        "packageVersion": "v1",
+        "caseCount": 15,
+        "baselineName": "Doubao",
+        "challengerName": "deepseek",
+        "taskSpace": "中文行业研究与职业讨论",
+        "sourceType": "local_codex_generation",
+        "generationArtifacts": [],
+        "importArtifacts": [],
+        "loadedAt": "2026-06-15T15:13:05.516Z"
+      },
+      "createdAt": "2026-06-15T14:28:37.428Z",
+      "updatedAt": "2026-06-16T03:05:38.941Z",
+      "showcase": {
+        "type": "real_completed_run",
+        "label": "Built-in showcase: real collected SBS run"
+      },
+      "showcaseSummary": {
+        "verdict": "baseline_wins",
+        "headline": "A second completed showcase for research-style chatbot comparison.",
+        "collected": {
+          "completed": 15,
+          "total": 15
+        },
+        "reportReady": true
+      }
+    }
+  ],
+  "updatedAt": "2026-06-16T03:28:00.210Z"
+}

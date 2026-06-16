@@ -66,7 +66,7 @@ function arenaSetupSections() {
       <p class="muted">These fields define the arena and the minimum viable input for eval-set generation.</p>
       <div class="two-column">
         ${selectField("Product type", "productType", [["chatbot", "Chatbot"]], "chatbot", "required")}
-          ${textField("Challenger name", "challengerName", `i.e. ${sample.challengerName}`, "required")}
+        ${textField("Challenger name", "challengerName", `i.e. ${sample.challengerName}`, "required")}
         ${selectField("Baseline app", "baselineName", [["Doubao", "豆包"]], "Doubao", "required")}
         ${selectField(
           "Baseline surface",
@@ -94,7 +94,18 @@ function arenaSetupSections() {
           "mobile_app",
           "required",
         )}
+        ${selectField(
+          "Local Codex model",
+          "localCodexModel",
+          [
+            ["gpt-5.5", "gpt-5.5 (default)"],
+            ["gpt-5.4", "gpt-5.4 (fallback when 5.5 is busy)"],
+          ],
+          "gpt-5.5",
+          "required",
+        )}
       </div>
+      <p class="field-hint">This setting is used for local package generation, simulator suggestions, capture-template setup, and grader/report jobs for this task.</p>
       ${textField("Task space", "taskLabel", sample.taskLabel, "required")}
       ${textareaField("Concrete scenario", "scenario", sample.scenario, "required")}
       ${textareaField("Target audience", "audience", sample.audience, "required")}
@@ -183,6 +194,7 @@ function readSetupForm(root) {
     title: `${taskLabel || "任务空间"}：${challengerName} vs ${baselineName}`,
     arena: {
       productType: value("productType") || "chatbot",
+      localCodexModel: value("localCodexModel") || "gpt-5.5",
       baseline: {
         name: baselineName,
         surface: value("baselineSurface") || "web_chat",

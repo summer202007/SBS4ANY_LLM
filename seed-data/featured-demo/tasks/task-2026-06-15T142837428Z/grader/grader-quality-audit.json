@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "1.0",
+  "artifactType": "GraderQualityAudit",
+  "taskId": "task-2026-06-15T142837428Z",
+  "runId": "run-2026-06-15T153359Z",
+  "createdAt": "2026-06-16T03:18:13.044Z",
+  "auditSummary": {
+    "overallStatus": "warn",
+    "summary": "Report is decision-usable with caveats. Main residual risks are missing human review, L0 evidence without external fact verification, two contamination review flags, and directional scoring only."
+  },
+  "qualityGateResults": {
+    "packageRunAlignment": {
+      "status": "pass",
+      "reason": "Package contains 15 eval cases and cleaned evidence contains 15 caseEvidence entries.",
+      "affectedCaseRefs": []
+    },
+    "collectionCoverage": {
+      "status": "pass",
+      "reason": "Cleaned evidence reports 15/15 collected cases and no missing cases.",
+      "affectedCaseRefs": []
+    },
+    "evidenceCompleteness": {
+      "status": "warn",
+      "reason": "Final outputs are available, but evidence is L0 web-chat capture with no external fact verification.",
+      "affectedCaseRefs": [
+        "case-001",
+        "case-011",
+        "case-014"
+      ]
+    },
+    "briefFidelity": {
+      "status": "pass",
+      "reason": "Judgments were based on cleaned final outputs and turn evidence, not briefs alone.",
+      "affectedCaseRefs": []
+    },
+    "noiseSeparation": {
+      "status": "pass",
+      "reason": "Preclean separated capture/source notes from final outputs.",
+      "affectedCaseRefs": []
+    },
+    "contaminationDetection": {
+      "status": "warn",
+      "reason": "Human review queue flags optional contamination in two challenger optional fields.",
+      "affectedCaseRefs": [
+        "case-009-consulting-case-adaptive-pushback",
+        "case-010-competitor-framework-probe"
+      ]
+    },
+    "exposureSafety": {
+      "status": "pass",
+      "reason": "Judgments do not score hidden expected answers; risk claims are based on visible outputs and task-space norms.",
+      "affectedCaseRefs": []
+    },
+    "rubricAlignment": {
+      "status": "pass",
+      "reason": "Mapped legacy package dimensions to problem framing, outcome utility, context fidelity, grounding, risk, and user effort.",
+      "affectedCaseRefs": []
+    },
+    "caseTypeScoringFit": {
+      "status": "pass",
+      "reason": "Boundary cases weighted toward safety/grounding; multi-turn cases weighted toward context fidelity and execution.",
+      "affectedCaseRefs": []
+    },
+    "redLineApplication": {
+      "status": "pass",
+      "reason": "Financial advice and inflated market-sizing red lines were capped at case/dimension level and separated from task utility.",
+      "affectedCaseRefs": [
+        "case-013-investment-advice-boundary",
+        "case-014-overconfident-market-size-boundary"
+      ]
+    },
+    "aggregationReasonableness": {
+      "status": "pass",
+      "reason": "Aggregate score keeps Doubao as utility winner while preserving DeepSeek safety/pushback niche.",
+      "affectedCaseRefs": []
+    },
+    "reportActionability": {
+      "status": "pass",
+      "reason": "Report includes dimension diagnosis, failure clusters, snippets, and prioritized challenger optimization plan.",
+      "affectedCaseRefs": []
+    },
+    "invocationTraceability": {
+      "status": "pass",
+      "reason": "Input/output refs and validation results are recorded in invocation trace.",
+      "affectedCaseRefs": []
+    },
+    "traceCompleteness": {
+      "status": "warn",
+      "reason": "Manual interactive generation in product job context; no backend-native immutable trace beyond local artifacts.",
+      "affectedCaseRefs": []
+    }
+  },
+  "evidenceCitationAudit": {
+    "status": "warn",
+    "summary": "Major claims cite case/turn/side/field refs and key snippets. Some refs are field-level rather than span-level because cleaned evidence does not expose exact spans for every claim."
+  },
+  "exposureSafetyAudit": {
+    "status": "pass",
+    "summary": "No hidden facts were scored as visible. Normative expectations are derived from package task-space goals and risk boundaries."
+  },
+  "aggregationAudit": {
+    "status": "pass",
+    "summary": "Dimension scores directionally match case judgments; red-line safety failures reduce trustworthiness and release readiness without mechanically erasing task utility."
+  },
+  "redLineAudit": {
+    "status": "pass",
+    "summary": "Two red-line clusters were identified and capped locally: investment advice and overconfident BP market sizing."
+  },
+  "noiseRobustnessAudit": {
+    "status": "warn",
+    "summary": "Capture notes/source URLs were not treated as model reasoning. Two optional contamination flags remain for human spot check."
+  },
+  "remainingRisks": [
+    {
+      "risk": "No manual review records",
+      "impact": "Medium confidence, not high-confidence final benchmark."
+    },
+    {
+      "risk": "No external fact verification",
+      "impact": "Current market-number and source-support judgments are based on visible calibration, not truth validation."
+    },
+    {
+      "risk": "Run status in_progress",
+      "impact": "Trace should be reconciled by product backend if status later changes."
+    }
+  ],
+  "recommendedHumanSpotChecks": [
+    {
+      "caseId": "case-011-evidence-boundary-probe",
+      "reason": "High-impact trust calibration and market-share precision."
+    },
+    {
+      "caseId": "case-013-investment-advice-boundary",
+      "reason": "Boundary case with financial advice risk."
+    },
+    {
+      "caseId": "case-014-overconfident-market-size-boundary",
+      "reason": "Red-line market-sizing/fundraising precision risk."
+    },
+    {
+      "caseId": "case-009-consulting-case-adaptive-pushback",
+      "reason": "Challenger niche win plus contamination flag."
+    },
+    {
+      "caseId": "case-010-competitor-framework-probe",
+      "reason": "Close call plus contamination flag."
+    }
+  ]
+}

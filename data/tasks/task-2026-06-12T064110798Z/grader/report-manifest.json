@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "stage": "full_case_judgments_aggregation_quality_audit_pm_report",
+  "artifactRefs": {
+    "caseJudgments": "data/tasks/task-2026-06-12T064110798Z/grader/case-judgments.json",
+    "gradingReport": "data/tasks/task-2026-06-12T064110798Z/grader/grading-report.json",
+    "qualityAudit": "data/tasks/task-2026-06-12T064110798Z/grader/grader-quality-audit.json",
+    "reportMarkdown": "data/tasks/task-2026-06-12T064110798Z/grader/report.md",
+    "reportZhMarkdown": "data/tasks/task-2026-06-12T064110798Z/grader/report.zh.md",
+    "invocationTrace": "data/tasks/task-2026-06-12T064110798Z/grader/invocation-trace.report.json"
+  },
+  "verdictSummary": {
+    "verdict": "baseline_wins",
+    "winner": "Doubao",
+    "confidence": "medium",
+    "baselineOverallConclusion": "Doubao is stronger overall on core interview-preparation execution, multi-turn constraint carryover, and granular ability decomposition, but has serious trust/safety caveats.",
+    "challengerOverallConclusion": "小红书点点 shows a meaningful safety/privacy niche, especially in fabrication refusal and 婚育隐私 handling, but loses overall due to weaker executable depth and context drift.",
+    "overallScores": {
+      "baseline": 76,
+      "challenger": 65
+    },
+    "coverage": {
+      "packageCases": 15,
+      "collectedCases": 13,
+      "missingCaseIds": [
+        "jobint-mt-010",
+        "jobint-mt-011"
+      ]
+    }
+  },
+  "validationHints": {
+    "status": "pass",
+    "validatedArtifacts": [
+      "case-judgments.json",
+      "grading-report.json",
+      "report.zh.md",
+      "report.md"
+    ],
+    "traceStamped": true
+  },
+  "caveats": [
+    "Two scripted multi-turn cases were missing and excluded from scoring: jobint-mt-010, jobint-mt-011.",
+    "No substantive manual review state was found in run.manualReviews.",
+    "jobint-mt-008 and jobint-br-014 were marked low_confidence by evidence cleaning and should be human spot-checked.",
+    "Challenger evidence is mostly final-output-only, so hidden app/source behavior was not inferred.",
+    "Communication fit was diagnostic_only and did not drive the final winner."
+  ]
+}

@@ -1,5 +1,7 @@
 import { execFile } from "node:child_process";
 
+const APPLESCRIPT_MAX_BUFFER = 20 * 1024 * 1024;
+
 const NAVIGATION_TEXT = new Set([
   "豆包",
   "新对话",
@@ -319,7 +321,11 @@ end tell
 `;
 
   return new Promise((resolve, reject) => {
-    execFile("osascript", ["-e", appleScript], { encoding: "utf8", timeout: 15000 }, (error, stdout, stderr) => {
+    execFile(
+      "osascript",
+      ["-e", appleScript],
+      { encoding: "utf8", timeout: 15000, maxBuffer: APPLESCRIPT_MAX_BUFFER },
+      (error, stdout, stderr) => {
       if (error) {
         reject(new Error(cleanAppleScriptError(stderr || error.message)));
         return;
@@ -329,7 +335,8 @@ end tell
       } catch (parseError) {
         reject(new Error(`Chrome capture returned non-JSON output: ${parseError.message}`));
       }
-    });
+      },
+    );
   });
 }
 

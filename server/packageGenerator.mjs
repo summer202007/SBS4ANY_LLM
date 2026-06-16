@@ -24,8 +24,10 @@ export async function generatePackageWithLocalCodex({ activeTask, caseCountTarge
     "exec",
     "--cd",
     rootDir,
+    "--skip-git-repo-check",
     "--ignore-user-config",
     "--ephemeral",
+    ...buildModelArgs(activeTask?.arena?.localCodexModel),
     "--sandbox",
     "workspace-write",
     "--output-last-message",
@@ -74,6 +76,11 @@ export async function generatePackageWithLocalCodex({ activeTask, caseCountTarge
       "stderr.txt": stderr,
     },
   };
+}
+
+function buildModelArgs(localCodexModel) {
+  const model = ["gpt-5.4", "gpt-5.5"].includes(localCodexModel) ? localCodexModel : "gpt-5.5";
+  return ["--model", model];
 }
 
 export function buildGeneratorIntake(activeTask, caseCountTarget = 15) {

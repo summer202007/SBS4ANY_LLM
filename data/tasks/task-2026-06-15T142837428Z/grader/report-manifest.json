@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "stage": "full case judgments, aggregation, quality audit, and PM-ready report",
+  "artifactRefs": {
+    "caseJudgments": "data/tasks/task-2026-06-15T142837428Z/grader/case-judgments.json",
+    "gradingReport": "data/tasks/task-2026-06-15T142837428Z/grader/grading-report.json",
+    "qualityAudit": "data/tasks/task-2026-06-15T142837428Z/grader/grader-quality-audit.json",
+    "reportMarkdown": "data/tasks/task-2026-06-15T142837428Z/grader/report.md",
+    "reportZhMarkdown": "data/tasks/task-2026-06-15T142837428Z/grader/report.zh.md",
+    "invocationTrace": "data/tasks/task-2026-06-15T142837428Z/grader/invocation-trace.report.json"
+  },
+  "verdictSummary": {
+    "headline": "Doubao wins task utility; DeepSeek has a safety and strategic-pushback niche.",
+    "taskUtilityWinner": "baseline",
+    "releaseSafetyReadinessWinner": "challenger",
+    "baselineOverallScore": 74,
+    "challengerOverallScore": 70,
+    "confidence": "medium",
+    "scoreInterpretation": "directional_scores"
+  },
+  "validationHints": {
+    "cleanedEvidence": "passed",
+    "caseJudgments": "passed",
+    "gradingReport": "passed",
+    "reportZhMarkdown": "passed",
+    "qualityAuditOverallStatus": "warn"
+  },
+  "caveats": [
+    "No manual review records were present.",
+    "Run status is in_progress.",
+    "Two cases have optional contamination-review flags.",
+    "Scores are directional PM-eval scores, not calibrated benchmark estimates.",
+    "Market facts were not externally verified; judgments use visible evidence calibration."
+  ]
+}

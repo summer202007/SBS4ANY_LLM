@@ -1,3 +1,5 @@
+const caseExpansionByTask = new Map();
+
 export function renderReviewView(root, packageState, graderBundle, handlers = {}) {
   const cleaned = graderBundle?.cleanedEvidence;
   const summary = graderBundle?.summary;
@@ -5,6 +7,7 @@ export function renderReviewView(root, packageState, graderBundle, handlers = {}
   const running = job?.status === "running";
   const cases = cleaned?.caseEvidence || [];
   const stats = summarizeCases(cases);
+  const taskId = packageState?.activeTask?.taskId || packageState?.package?.packageId || "default";
 
   root.innerHTML = `
     <div class="view-heading">
@@ -33,7 +36,7 @@ export function renderReviewView(root, packageState, graderBundle, handlers = {}
 
     ${
       cleaned
-        ? renderCleanedEvidence(cleaned)
+        ? renderCleanedEvidence(cleaned, taskId)
         : `<section class="empty-state">
             <h2>No cleaned evidence yet</h2>
             <p>Run Review + Report once. SBS will call local Codex with the full chatbot-sbs-grader skill, write cleaned evidence first, then continue generating the report in the same background job.</p>
@@ -43,6 +46,11 @@ export function renderReviewView(root, packageState, graderBundle, handlers = {}
 
   root.querySelector("#runGrader")?.addEventListener("click", () => {
     handlers.onRunGrader?.({ settings: readSettings(root) });
+  });
+  root.querySelectorAll("details.grader-case-card").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      setCaseExpansion(taskId, details.dataset.caseId, details.open);
+    });
   });
 }
 
@@ -81,7 +89,7 @@ function renderJobPanel(job) {
   `;
 }
 
-function renderCleanedEvidence(cleaned) {
+function renderCleanedEvidence(cleaned, taskId) {
   return `
     <section class="section-band">
       <h3>Coverage</h3>
@@ -96,17 +104,18 @@ function renderCleanedEvidence(cleaned) {
     <section class="section-band">
       <h3>Case Evidence</h3>
       <div class="grader-case-list">
-        ${(cleaned.caseEvidence || []).map(renderCaseEvidence).join("")}
+        ${(cleaned.caseEvidence || []).map((item) => renderCaseEvidence(item, taskId)).join("")}
       </div>
     </section>
   `;
 }
 
-function renderCaseEvidence(item) {
+function renderCaseEvidence(item, taskId) {
   const needsAttention = ["missing", "blocked", "low_confidence", "needs_human_review"].includes(item.status);
   const findingsCount = (item.caseFindings || []).length;
+  const open = getCaseExpansion(taskId, item.caseId, needsAttention);
   return `
-    <details class="grader-case-card" ${needsAttention ? "open" : ""}>
+    <details class="grader-case-card" data-case-id="${escapeHtml(item.caseId || "")}" ${open ? "open" : ""}>
       <summary>
         <strong>${escapeHtml(item.caseId)}</strong>
         <span>${escapeHtml(item.caseType || "")}</span>
@@ -118,6 +127,17 @@ function renderCaseEvidence(item) {
       ${(item.turnEvidence || []).map(renderTurnEvidence).join("")}
     </details>
   `;
+}
+
+function getCaseExpansion(taskId, caseId, defaultOpen) {
+  const key = `${taskId || "default"}::${caseId || ""}`;
+  if (caseExpansionByTask.has(key)) return caseExpansionByTask.get(key);
+  return defaultOpen;
+}
+
+function setCaseExpansion(taskId, caseId, open) {
+  if (!caseId) return;
+  caseExpansionByTask.set(`${taskId || "default"}::${caseId}`, Boolean(open));
 }
 
 function reviewActionHint(status) {

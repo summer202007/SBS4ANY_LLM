@@ -110,7 +110,7 @@ export function buildSimulatorPrompt(turnExecutionState) {
   ].join("\n");
 }
 
-export async function suggestNextUserTurnWithLocalCodex(turnExecutionState) {
+export async function suggestNextUserTurnWithLocalCodex(turnExecutionState, options = {}) {
   const prompt = buildSimulatorPrompt(turnExecutionState);
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "sbs-simulator-"));
   const outputPath = path.join(tempDir, "simulator-output.json");
@@ -121,6 +121,10 @@ export async function suggestNextUserTurnWithLocalCodex(turnExecutionState) {
     "exec",
     "--cd",
     rootDir,
+    "--skip-git-repo-check",
+    "--ignore-user-config",
+    "--ephemeral",
+    ...buildModelArgs(options.localCodexModel),
     "--sandbox",
     "read-only",
     "--output-schema",
@@ -144,6 +148,11 @@ export async function suggestNextUserTurnWithLocalCodex(turnExecutionState) {
     artifactRefs: [outputPath, stdoutPath, stderrPath],
     validatorResult,
   };
+}
+
+function buildModelArgs(localCodexModel) {
+  const model = ["gpt-5.4", "gpt-5.5"].includes(localCodexModel) ? localCodexModel : "gpt-5.5";
+  return ["--model", model];
 }
 
 export function validateSimulatorOutput(output, turnExecutionState) {

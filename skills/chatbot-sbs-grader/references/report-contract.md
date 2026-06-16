@@ -72,7 +72,7 @@ Important: this app-facing constraint does **not** apply to the full markdown/PD
 
 ## PDF / Markdown Report Structure
 
-The product UI should export a polished PDF. The quality bar is a PM memo-style report exported to PDF: clean hierarchy, readable tables, stable pagination, compact but complete analysis, and enough granularity for stakeholder review.
+The product UI should export a polished PDF. The quality bar is a Feishu-style PM memo exported to PDF: clean hierarchy, readable tables, stable pagination, compact but complete analysis, and enough granularity for portfolio review.
 
 Do not treat browser page printing, screenshots, or raw app-page print dialogs as acceptable final PDF export. A temporary debug preview may exist, but the product-facing download must be a generated report document/PDF artifact.
 
@@ -95,11 +95,11 @@ Use this document order for PDF/Markdown report content:
 13. Uncertainty And Caveats.
 14. Appendix / Artifact Refs.
 
-The exported report should feel close to a polished PM memo: clear hierarchy, compact tables, short diagnostic paragraphs, and evidence refs where conclusions depend on specific cases. The PDF should preserve the same analytical granularity as a strong manually created PM report, not merely mirror the app's progressive-disclosure screen.
+The exported report should feel close to a Feishu PM memo: clear hierarchy, compact tables, short diagnostic paragraphs, and evidence refs where conclusions depend on specific cases. The PDF should preserve the same analytical granularity as the best manually created Feishu report, not merely mirror the app's progressive-disclosure screen.
 
 ### Chinese Memo Quality Bar
 
-When `reportLanguage` is `zh` or a `report.zh.md` output ref is provided, the Chinese report should follow this PM memo-style structure unless the user explicitly requests otherwise:
+When `reportLanguage` is `zh` or a `report.zh.md` output ref is provided, the Chinese report should follow this Feishu-style structure unless the user explicitly requests otherwise:
 
 ```markdown
 # SBS 评分报告：{任务空间}

@@ -209,6 +209,23 @@ function render() {
           render();
         }, "SBS verdict opened.");
       },
+      onDeleteTask: async (taskId) => {
+        const task = state.packageState?.tasks?.items?.find((item) => item.taskId === taskId);
+        const confirmed = await confirmAction({
+          title: "Delete Evaluation Task",
+          message: `Delete "${task?.title || taskId}"? This removes its package, collection, review, and report artifacts from the local app.`,
+          okLabel: "Delete",
+        });
+        if (!confirmed) return;
+        await withStatus("Deleting evaluation task...", async () => {
+          const packageState = await api.deleteTask(taskId);
+          setPackageState(packageState);
+          const graderState = await api.getGrader();
+          setGraderState({ bundle: graderState.grader, job: null });
+          setCurrentView("tasks");
+          render();
+        }, "Evaluation task deleted.");
+      },
     });
     return;
   }

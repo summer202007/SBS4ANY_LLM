@@ -66,6 +66,8 @@ export function writeReviewNotes({ taskId, notes } = {}) {
 
 export async function runFullGraderPipeline({ taskId, settings = {}, jobId, onEvent } = {}) {
   const p = getGraderPaths(taskId);
+  const state = getCurrentState();
+  const localCodexModel = state.activeTask?.arena?.localCodexModel;
   mkdirSync(p.graderDir, { recursive: true });
   mkdirSync(p.jobsDir, { recursive: true });
   if (!existsSync(p.packagePath)) throw new Error("No runtime eval package found for the active task.");
@@ -82,6 +84,7 @@ export async function runFullGraderPipeline({ taskId, settings = {}, jobId, onEv
     prompt: buildCleaningPrompt(p, { settings, jobId, inputHash }),
     outputPath: path.join(p.graderDir, "clean-manifest.json"),
     tracePath: p.cleanTracePath,
+    localCodexModel,
     onEvent,
   });
   emit(onEvent, "cleaned_ready", "Cleaned evidence written. Review page can render it now.");
@@ -96,6 +99,7 @@ export async function runFullGraderPipeline({ taskId, settings = {}, jobId, onEv
     prompt: buildReportPrompt(p, { settings, jobId, inputHash }),
     outputPath: path.join(p.graderDir, "report-manifest.json"),
     tracePath: p.reportTracePath,
+    localCodexModel,
     onEvent,
   });
   emit(onEvent, "validating_report", "Validating grader output artifacts.");
@@ -119,6 +123,7 @@ export async function runFullGraderPipeline({ taskId, settings = {}, jobId, onEv
       prompt: buildReportMarkdownRepairPrompt(p, { settings, jobId, inputHash, reportMarkdownValidation }),
       outputPath: path.join(p.graderDir, "report-repair-manifest.json"),
       tracePath: p.reportRepairTracePath,
+      localCodexModel,
       onEvent,
     });
     reportMarkdownValidation = runValidator(
@@ -224,6 +229,7 @@ function buildReportPrompt(p, { settings, jobId, inputHash }) {
     "Stage: full case judgments, aggregation, quality audit, and PM-ready report.",
     "Read the package, run, cleaned evidence, and review notes listed below.",
     "Use cleaned evidence as the primary normalized layer, but reopen full cleaned/raw evidence when a judgment depends on details. Do not rely on briefs alone.",
+    "When reopening raw run data, remember run.caseRuns may be an object keyed by caseId, not an array. Never call .find/.map/.filter on raw run.caseRuns; normalize first with Array.isArray(run.caseRuns) ? run.caseRuns : Object.values(run.caseRuns || {}).",
     "Produce all required JSON artifacts and markdown reports at the exact outputRefs paths.",
     "There are two report surfaces: grading-report.json is app-facing structured data; report.md/report.zh.md are full memo-grade sources for PDF export. Do not collapse the full report into the app summary.",
     "The app will render grading-report.json, while PDF export uses report.zh.md/report.md. Markdown reports must preserve PM memo depth and should not merely mirror app cards.",
@@ -282,6 +288,7 @@ function buildReportMarkdownRepairPrompt(p, { settings, jobId, inputHash, report
     "Stage: repair markdown report quality only.",
     "Do not change collected evidence, case judgments, grading-report.json, or quality audit.",
     "Read the existing artifacts and rewrite report.md/report.zh.md at the exact outputRefs paths.",
+    "When reopening raw run data, remember run.caseRuns may be an object keyed by caseId, not an array. Never call .find/.map/.filter on raw run.caseRuns; normalize first with Array.isArray(run.caseRuns) ? run.caseRuns : Object.values(run.caseRuns || {}).",
     "The repair goal is to restore the full PM memo quality bar while preserving the same judgments and scores.",
     "The web app does not need a standalone Key Reasons JSON module, but report.zh.md/report.md MUST include a dedicated 关键原因 / Why This Verdict section.",
     "For report.zh.md, use the canonical Chinese memo structure from report-contract.md: 结论摘要, 方法说明/如何阅读分数, 总分与维度分 with 总体表现 row, 关键原因, 关键证据摘录, priority-grouped challenger optimization suggestions, Case 类型拆解, 失败簇与红线, 局部优势, Case 明细表, 不确定性与 caveats, 附录.",
@@ -310,14 +317,16 @@ function runDeterministicPreclean(p) {
   );
 }
 
-async function runCodexStage({ stage, prompt, outputPath, tracePath, onEvent }) {
+async function runCodexStage({ stage, prompt, outputPath, tracePath, localCodexModel, onEvent }) {
   const codexPath = process.env.SBS_CODEX_PATH || "/Applications/Codex.app/Contents/Resources/codex";
   const args = [
     "exec",
     "--cd",
     rootDir,
+    "--skip-git-repo-check",
     "--ignore-user-config",
     "--ephemeral",
+    ...buildModelArgs(localCodexModel),
     "--sandbox",
     "workspace-write",
     "--output-last-message",
@@ -342,6 +351,11 @@ async function runCodexStage({ stage, prompt, outputPath, tracePath, onEvent }) 
     manifest,
   });
   return manifest;
+}
+
+function buildModelArgs(localCodexModel) {
+  const model = ["gpt-5.4", "gpt-5.5"].includes(localCodexModel) ? localCodexModel : "gpt-5.5";
+  return ["--model", model];
 }
 
 function runCodex(command, args, input, timeoutMs, onEvent) {

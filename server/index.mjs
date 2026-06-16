@@ -10,12 +10,13 @@ import { generatePackageWithLocalCodex } from "./packageGenerator.mjs";
 import { getPackageGenerationJob, startPackageGenerationJob } from "./packageGenerationJobs.mjs";
 import { getCurrentGrader, getGraderJob, saveGraderReviewNotes, startGraderJob } from "./graderJobs.mjs";
 import { exportCurrentGraderPdf, readCurrentGraderPdf } from "./pdfExporter.mjs";
-import { buildFallbackRuntimePackage, buildManualTemplateWorkbook, parseManualTemplateWorkbook } from "./packageTemplate.mjs";
+import { buildManualTemplateWorkbook, parseManualTemplateWorkbook } from "./packageTemplate.mjs";
 import {
   applySimulatorSuggestion,
   acceptCaptureSession,
   createEvaluationTask,
   discardCaptureSession,
+  deleteEvaluationTask,
   failCaptureSession,
   getCurrentState,
   installRuntimePackage,
@@ -89,20 +90,8 @@ async function handleApi(req, res, url) {
         }),
       );
     } catch (error) {
-      const fallbackPackage = buildFallbackRuntimePackage(
-        state.activeTask,
-        payload.caseCountTarget || 15,
-        error.message,
-      );
-      const nextState = installRuntimePackage(fallbackPackage, {
-        sourceType: "fallback_scaffold_after_local_codex_failure",
-        generationArtifacts: [],
-        artifactFiles: {
-          "local-codex-failure.txt": error.message,
-        },
-      });
-      sendJson(res, 200, {
-        ...nextState,
+      sendJson(res, 500, {
+        error: error.message,
         generationWarning: error.message,
       });
     }
@@ -175,6 +164,12 @@ async function handleApi(req, res, url) {
   if (req.method === "POST" && url.pathname === "/api/tasks/select") {
     const payload = await readRequestJson(req);
     sendJson(res, 200, selectEvaluationTask(payload.taskId));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/tasks/delete") {
+    const payload = await readRequestJson(req);
+    sendJson(res, 200, deleteEvaluationTask(payload.taskId));
     return;
   }
 
@@ -261,6 +256,7 @@ async function handleApi(req, res, url) {
         nextUserMessage: nextTurn?.userMessage || "",
         firstTimeCalibration: Boolean(payload.firstTimeCalibration),
         targetUrl: payload.targetUrl || "",
+        localCodexModel: state.activeTask?.arena?.localCodexModel,
       });
       assertCaptureReadyForReview(capture);
       sendJson(res, 200, savePendingCapture(capture));
@@ -375,7 +371,9 @@ async function handleApi(req, res, url) {
       trackedState: {},
       trajectoryNotesSoFar: collectTrajectoryNotes(caseRun, currentTurnIndex),
     });
-    const simulatorResult = await suggestNextUserTurnWithLocalCodex(turnExecutionState);
+    const simulatorResult = await suggestNextUserTurnWithLocalCodex(turnExecutionState, {
+      localCodexModel: state.activeTask?.arena?.localCodexModel,
+    });
     const nextState = applySimulatorSuggestion({
       caseId: payload.caseId,
       turnIndex: currentTurnIndex,

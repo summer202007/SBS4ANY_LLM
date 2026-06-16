@@ -1,0 +1,84 @@
+{
+  "items": [
+    {
+      "providerId": "deepseek_web",
+      "providerName": "DeepSeek Web",
+      "status": "ready",
+      "sideSupport": [
+        "challenger"
+      ],
+      "urlPatterns": [
+        "chat.deepseek.com"
+      ],
+      "templateSource": "built_in",
+      "lastVerifiedUrl": "https://chat.deepseek.com/a/chat/s/9f0b9bff-0478-4e05-9d42-60e6a7d6e71c",
+      "lastQaResult": {
+        "ok": true,
+        "adapterReadiness": "ready",
+        "fieldResults": {
+          "userMessage": "pass",
+          "finalAnswer": "pass",
+          "referenceMaterials": "unsupported",
+          "riskNotices": "pass",
+          "followupSuggestions": "unsupported",
+          "intentExpansionQueries": "unsupported",
+          "visibleProcessNotes": "pass",
+          "toolcallNotes": "pass"
+        },
+        "blockingIssues": [],
+        "warnings": [],
+        "developerInstructions": []
+      },
+      "adapterBuilderOutput": null,
+      "adapterBuilderArtifacts": [],
+      "updatedAt": "2026-06-16T03:05:38.919Z"
+    },
+    {
+      "providerId": "dots_ai_web",
+      "providerName": "dots.ai / 点点 Web",
+      "status": "ready",
+      "sideSupport": [
+        "challenger"
+      ],
+      "urlPatterns": [
+        "dots.ai"
+      ],
+      "templateSource": "built_in",
+      "lastVerifiedUrl": "https://dots.ai/chat/home/CHAT_4674183982790074368",
+      "lastQaResult": {
+        "ok": true,
+        "adapterReadiness": "ready",
+        "fieldResults": {
+          "userMessage": "pass",
+          "finalAnswer": "pass",
+          "referenceMaterials": "pass",
+          "riskNotices": "pass",
+          "followupSuggestions": "unsupported",
+          "intentExpansionQueries": "unsupported",
+          "visibleProcessNotes": "unsupported",
+          "toolcallNotes": "pass"
+        },
+        "blockingIssues": [],
+        "warnings": [],
+        "developerInstructions": []
+      },
+      "adapterBuilderOutput": null,
+      "adapterBuilderArtifacts": [],
+      "updatedAt": "2026-06-12T08:16:23.913Z"
+    },
+    {
+      "providerId": "doubao_web",
+      "providerName": "Doubao Web",
+      "status": "ready",
+      "sideSupport": [
+        "baseline"
+      ],
+      "urlPatterns": [
+        "doubao.com"
+      ],
+      "templateSource": "built_in",
+      "updatedAt": null
+    }
+  ],
+  "updatedAt": "2026-06-16T03:05:38.919Z"
+}

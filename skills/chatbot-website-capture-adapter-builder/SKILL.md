@@ -1,6 +1,6 @@
 ---
 name: chatbot-website-capture-adapter-builder
-description: Use only when invoked by the SBS workbench or local harness to create, calibrate, or QA a read-only capture adapter for a web chatbot page. This skill turns browser snapshots, screenshots, visible text, DOM summaries, and task-turn context into a provider-specific extraction plan, adapter contract, normalized SBS field mapping, and QA gate result. Do not use for final grading, eval-set generation, ordinary browsing, or auto-sending prompts into third-party products.
+description: Use only when invoked by the SBS workbench or local harness to create, calibrate, or QA a read-only capture adapter for a web chatbot page. This skill turns browser snapshots, screenshots, visible text, DOM summaries, task-turn context, and candidate conversation structures into a provider-specific extraction plan, snapshot recon contract, normalized SBS field mapping, and QA gate result. Do not use for final grading, eval-set generation, ordinary browsing, or auto-sending prompts into third-party products.
 ---
 
 # Chatbot Website Capture Adapter Builder
@@ -24,7 +24,7 @@ Use the smallest available packet that contains:
 - target side: `baseline` or `challenger`;
 - target fields, usually `finalAnswer`, `visibleProcessNotes`, `intentExpansionQueries`, `referenceMaterials`, `riskNotices`, `followupSuggestions`, `sourceNotes`, `toolcallNotes`;
 - screenshot or human-visible description when available;
-- browser snapshot: raw visible text, DOM summary, anchors, buttons, candidate message containers;
+- browser snapshot: raw visible text, current-turn visible text candidate, DOM summary, anchors, buttons, candidate message containers, descendant markdown nodes, turn-boundary candidates, and any evidence that the current prompt is duplicated in composer/sidebar/history chrome;
 - current adapter code only if the task is explicitly an update, not an isolation regression.
 
 ## Workflow
@@ -38,10 +38,12 @@ Use the smallest available packet that contains:
    - List visible target artifacts and unsupported artifacts.
    - Separate final answer, source evidence, intent/search expansion, risk notices, follow-up suggestions, visible process/status, and nav/sidebar noise.
 
-3. **Extraction plan**
+3. **Extraction and recon plan**
    - Read `references/extraction-plan.md`.
    - Define turn scope first. For multi-turn pages, scope by current user message, next user message, and message-container boundaries.
+   - Do not blindly choose the last occurrence of the current user message; many chat UIs repeat the prompt in the bottom composer, sidebar, or history. Choose the occurrence followed by the current assistant answer.
    - Plan extraction for each target field.
+   - If the first snapshot is too weak, define the recon contract required for a second pass: snapshot requirements, provider-specific selector hints, turn-boundary heuristics, and retry advice.
    - Include provider-specific expansion actions only for visible evidence controls.
 
 4. **Normalization mapper**
@@ -68,10 +70,16 @@ Return or save structured output with:
 ```json
 {
   "providerId": "example_web",
+  "providerName": "Example Web Chat",
   "mode": "plan|implementation|qa|isolation_regression",
   "fieldInventory": {},
   "extractionPlan": {},
   "normalizationMapper": {},
+  "snapshotRequirements": {},
+  "selectorHints": {},
+  "turnBoundaryPlan": {},
+  "providerUiPatterns": {},
+  "reconRetryAdvice": [],
   "qaExpectations": {},
   "qaResult": {},
   "knownLimitations": [],

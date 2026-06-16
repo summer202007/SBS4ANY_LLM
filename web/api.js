@@ -27,6 +27,8 @@ export const api = {
     request("/api/tasks/create", { method: "POST", body: JSON.stringify(payload) }),
   selectTask: (taskId) =>
     request("/api/tasks/select", { method: "POST", body: JSON.stringify({ taskId }) }),
+  deleteTask: (taskId) =>
+    request("/api/tasks/delete", { method: "POST", body: JSON.stringify({ taskId }) }),
   saveCaseCuration: (payload) =>
     request("/api/curation/current", { method: "POST", body: JSON.stringify(payload) }),
   startCollection: () => request("/api/run/start-collection", { method: "POST" }),

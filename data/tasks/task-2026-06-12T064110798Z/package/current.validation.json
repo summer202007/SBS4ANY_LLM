@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "errors": [],
+  "schemaErrors": [],
+  "consistencyErrors": [],
+  "warnings": [],
+  "stats": {
+    "caseCount": 15,
+    "turnScriptCount": 6,
+    "rubricCount": 6,
+    "validationMode": "local"
+  }
+}

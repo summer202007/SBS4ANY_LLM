@@ -1,5 +1,4 @@
 import { generatePackageWithLocalCodex } from "./packageGenerator.mjs";
-import { buildFallbackRuntimePackage } from "./packageTemplate.mjs";
 import { getCurrentState, installRuntimePackage } from "./storage.mjs";
 
 const jobs = new Map();
@@ -70,24 +69,15 @@ async function runJob(job, activeTask) {
     });
     pushLog(job.jobId, "Package generated and validated.");
   } catch (error) {
-    pushLog(job.jobId, "Local Codex did not return a package. Installing fallback draft.");
-    const fallbackPackage = buildFallbackRuntimePackage(activeTask, job.caseCountTarget, error.message);
-    const state = installRuntimePackage(fallbackPackage, {
-      activeTaskId: activeTask.taskId,
-      sourceType: "fallback_scaffold_after_local_codex_failure",
-      generationArtifacts: [],
-      artifactFiles: {
-        "local-codex-failure.txt": error.message,
-      },
-    });
+    pushLog(job.jobId, "Local Codex did not return a package. No fallback package was installed.");
     updateJob(job.jobId, {
-      status: "fallback",
-      phase: "fallback_package_ready",
-      warning: error.message,
+      status: "failed",
+      phase: "local_codex_failed",
+      error: error.message,
       finishedAt: new Date().toISOString(),
-      resultSummary: summarizeState(state),
+      resultSummary: summarizeState(),
     });
-    pushLog(job.jobId, "Fallback package installed. Review carefully or retry generation.");
+    pushLog(job.jobId, "Generation failed. Fix the issue or retry; existing task data was left unchanged.");
   }
 }
 

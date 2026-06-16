@@ -6,17 +6,29 @@ import { rootDir } from "./storage.mjs";
 
 const skillPath = path.join(rootDir, "skills", "chatbot-website-capture-adapter-builder", "SKILL.md");
 
-export async function buildAdapterTemplateWithLocalCodex({ snapshot, caseId, turnIndex, userMessage, targetUrl }) {
+export async function buildAdapterTemplateWithLocalCodex({
+  snapshot,
+  caseId,
+  turnIndex,
+  userMessage,
+  nextUserMessage = "",
+  targetUrl,
+  localCodexModel,
+}) {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "sbs-adapter-builder-"));
   const outputPath = path.join(tempDir, "adapter-builder-output.json");
   const stdoutPath = path.join(tempDir, "stdout.txt");
   const stderrPath = path.join(tempDir, "stderr.txt");
-  const prompt = buildPrompt({ snapshot, caseId, turnIndex, userMessage, targetUrl });
+  const prompt = buildPrompt({ snapshot, caseId, turnIndex, userMessage, nextUserMessage, targetUrl });
   const codexPath = process.env.SBS_CODEX_PATH || "/Applications/Codex.app/Contents/Resources/codex";
   const args = [
     "exec",
     "--cd",
     rootDir,
+    "--skip-git-repo-check",
+    "--ignore-user-config",
+    "--ephemeral",
+    ...buildModelArgs(localCodexModel),
     "--sandbox",
     "read-only",
     "--output-last-message",
@@ -37,14 +49,23 @@ export async function buildAdapterTemplateWithLocalCodex({ snapshot, caseId, tur
   };
 }
 
-function buildPrompt({ snapshot, caseId, turnIndex, userMessage, targetUrl }) {
+function buildModelArgs(localCodexModel) {
+  const model = ["gpt-5.4", "gpt-5.5"].includes(localCodexModel) ? localCodexModel : "gpt-5.5";
+  return ["--model", model];
+}
+
+function buildPrompt({ snapshot, caseId, turnIndex, userMessage, nextUserMessage, targetUrl }) {
   const compactSnapshot = {
     url: snapshot.url,
     title: snapshot.title,
     host: snapshot.host,
-    caseContext: { caseId, turnIndex, userMessage, targetUrl },
+    caseContext: { caseId, turnIndex, userMessage, nextUserMessage, targetUrl },
     rawVisibleTextPreview: String(snapshot.rawVisibleText || "").slice(0, 5000),
+    currentTurnVisibleTextPreview: String(snapshot.currentTurnVisibleTextCandidate || "").slice(0, 4000),
     messageItems: (snapshot.messageItems || []).slice(-12),
+    candidateMessageContainers: (snapshot.candidateMessageContainers || []).slice(-20),
+    descendantMarkdownNodes: (snapshot.descendantMarkdownNodes || []).slice(0, 30),
+    turnBoundaryCandidates: (snapshot.turnBoundaryCandidates || []).slice(0, 20),
     domSummary: (snapshot.domSummary || []).slice(-80),
     anchors: (snapshot.anchors || []).slice(0, 80),
     buttons: (snapshot.buttons || []).slice(0, 80),
@@ -55,10 +76,16 @@ function buildPrompt({ snapshot, caseId, turnIndex, userMessage, targetUrl }) {
     `Skill path: ${skillPath}`,
     "You are building a safe capture-template draft for the SBS workbench.",
     "Do not generate executable code. Do not auto-send prompts. Do not claim hidden traces.",
-    "Return strict JSON only, with keys: providerId, providerName, urlPatterns, status, fieldInventory, extractionPlan, normalizationMapper, qaResult, knownLimitations, manualFallbackInstructions.",
+    "Return strict JSON only, with keys: providerId, providerName, urlPatterns, status, fieldInventory, extractionPlan, normalizationMapper, snapshotRequirements, selectorHints, turnBoundaryPlan, providerUiPatterns, reconRetryAdvice, qaResult, knownLimitations, manualFallbackInstructions.",
     "urlPatterns must contain host/domain patterns only, such as dots.ai. Do not include chat paths, conversation IDs, query strings, or fragments.",
     "status must be one of ready, partial, blocked.",
     "Use ready only if the snapshot has enough message/container evidence to support future safe capture. Otherwise use partial or blocked.",
+    "snapshotRequirements should describe which evidence surfaces future snapshots must collect. selectorHints should list provider-specific selectors only when they are grounded in the visible snapshot evidence.",
+    "turnBoundaryPlan should explain how to isolate the current user turn. providerUiPatterns should summarize stable visible UI signals, not brittle internal implementation claims.",
+    "If the current user prompt appears multiple times, such as once in the conversation and again in the bottom composer/input/sidebar/history, do not choose the last occurrence by default. The real turn is the occurrence followed by substantial assistant answer text; composer/input echoes are chrome and must be excluded.",
+    "If DOM containers are incomplete, stale, or viewport-biased but raw visible text clearly contains the current prompt followed by the answer, propose raw-line turn scoping as the primary extraction source and DOM containers as fallback.",
+    "Only propose synthetic expansion clicks for read-only source/citation controls with interactive elements and clear text/class hints; never click ordinary answer words.",
+    "reconRetryAdvice should only be present when a refined snapshot pass would materially improve capture confidence.",
     "qaResult must include ok, adapterReadiness, fieldResults, blockingIssues, warnings, developerInstructions.",
     "",
     "Snapshot packet:",

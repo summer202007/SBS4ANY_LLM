@@ -1,0 +1,169 @@
+{
+  "createdAt": "2026-06-16T03:19:19.996Z",
+  "inputHash": "6ed9c7c2988a164f15bd73ee9867e66573f2323807d755f2a947029359fd8152",
+  "preclean": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "top-level contract",
+      "case/turn/side presence",
+      "grade readiness enums",
+      "evidence channel array shape",
+      "missing final output warnings"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-15T142837428Z/grader/cleaned-evidence.preclean.json"
+  },
+  "cleanedEvidence": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "top-level contract",
+      "case/turn/side presence",
+      "grade readiness enums",
+      "evidence channel array shape",
+      "missing final output warnings"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-15T142837428Z/grader/cleaned-evidence.json"
+  },
+  "caseJudgments": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "case judgment shape",
+      "score ranges",
+      "winner enums",
+      "not-scored case handling",
+      "evidence ref arrays",
+      "evidence snippet presence"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-15T142837428Z/grader/case-judgments.json"
+  },
+  "gradingReport": {
+    "ok": true,
+    "checkerType": "lightweight_custom_checker",
+    "coverage": [
+      "report top-level shape",
+      "verdict enum",
+      "dual verdicts",
+      "side overall conclusions",
+      "overall score completeness",
+      "directional score caveat",
+      "score scale",
+      "scoreboard row completeness",
+      "not-scored case handling",
+      "key evidence snippets",
+      "optimization plan presence"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-15T142837428Z/grader/grading-report.json"
+  },
+  "reportMarkdown": {
+    "ok": true,
+    "checkerType": "memo_quality_checker",
+    "coverage": [
+      "memo length",
+      "title",
+      "executive summary",
+      "methodology and directional score caveat",
+      "scoreboard with overall row",
+      "dedicated key reasons",
+      "key evidence excerpts",
+      "priority-grouped optimization",
+      "case breakdown",
+      "red lines",
+      "case table",
+      "caveats"
+    ],
+    "errors": [],
+    "warnings": [],
+    "exitCode": 0,
+    "artifactRef": "data/tasks/task-2026-06-15T142837428Z/grader/report.zh.md"
+  },
+  "cleanManifest": {
+    "ok": true,
+    "stage": "evidence_cleaning",
+    "artifactRefs": {
+      "cleanedEvidence": "data/tasks/task-2026-06-15T142837428Z/grader/cleaned-evidence.json",
+      "cleaningSummary": "data/tasks/task-2026-06-15T142837428Z/grader/cleaning-summary.md",
+      "invocationTrace": "data/tasks/task-2026-06-15T142837428Z/grader/invocation-trace.clean.json"
+    },
+    "summary": {
+      "caseCount": 15,
+      "turnCount": 25,
+      "sideTurnCount": 50,
+      "caseReadiness": {
+        "ready": 12,
+        "low_confidence": 1,
+        "needs_human_review": 2
+      },
+      "sideTurnReadiness": {
+        "ready": 46,
+        "low_confidence": 2,
+        "needs_human_review": 2
+      },
+      "captureNotesSeparated": 91,
+      "unsupportedClaimCandidates": 55,
+      "suspectedContaminationItems": 2,
+      "humanReviewQueueItems": 2,
+      "validation": {
+        "ok": true,
+        "errors": [],
+        "warnings": []
+      }
+    },
+    "caveats": [
+      "Raw package/run artifacts were preserved and not rewritten.",
+      "Run status is in_progress, so downstream grading should carry a run-completion caveat.",
+      "No manual review records were present in run.manualReviews; downstream grading/reporting should mark confidence accordingly.",
+      "Cleaning is derived from visible collected evidence and deterministic preclean; it does not externally fact-check model claims.",
+      "Project memory file docs/context/agent-pm-transition-context.md was not present in this checkout."
+    ]
+  },
+  "reportManifest": {
+    "ok": true,
+    "stage": "full case judgments, aggregation, quality audit, and PM-ready report",
+    "artifactRefs": {
+      "caseJudgments": "data/tasks/task-2026-06-15T142837428Z/grader/case-judgments.json",
+      "gradingReport": "data/tasks/task-2026-06-15T142837428Z/grader/grading-report.json",
+      "qualityAudit": "data/tasks/task-2026-06-15T142837428Z/grader/grader-quality-audit.json",
+      "reportMarkdown": "data/tasks/task-2026-06-15T142837428Z/grader/report.md",
+      "reportZhMarkdown": "data/tasks/task-2026-06-15T142837428Z/grader/report.zh.md",
+      "invocationTrace": "data/tasks/task-2026-06-15T142837428Z/grader/invocation-trace.report.json"
+    },
+    "verdictSummary": {
+      "headline": "Doubao wins task utility; DeepSeek has a safety and strategic-pushback niche.",
+      "taskUtilityWinner": "baseline",
+      "releaseSafetyReadinessWinner": "challenger",
+      "baselineOverallScore": 74,
+      "challengerOverallScore": 70,
+      "confidence": "medium",
+      "scoreInterpretation": "directional_scores"
+    },
+    "validationHints": {
+      "cleanedEvidence": "passed",
+      "caseJudgments": "passed",
+      "gradingReport": "passed",
+      "reportZhMarkdown": "passed",
+      "qualityAuditOverallStatus": "warn"
+    },
+    "caveats": [
+      "No manual review records were present.",
+      "Run status is in_progress.",
+      "Two cases have optional contamination-review flags.",
+      "Scores are directional PM-eval scores, not calibrated benchmark estimates.",
+      "Market facts were not externally verified; judgments use visible evidence calibration."
+    ]
+  },
+  "reportRepairManifest": null
+}

@@ -1,6 +1,6 @@
 {
   "name": "sbs-4-any-agent",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Local side-by-side evaluation workbench for comparing AI products in concrete task spaces.",
   "type": "module",
   "engines": {

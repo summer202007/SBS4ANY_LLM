@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "stage": "evidence_cleaning_only",
+  "artifactRefs": {
+    "cleanedEvidence": "data/tasks/task-2026-06-12T064110798Z/grader/cleaned-evidence.json",
+    "cleaningSummary": "data/tasks/task-2026-06-12T064110798Z/grader/cleaning-summary.md",
+    "invocationTrace": "data/tasks/task-2026-06-12T064110798Z/grader/invocation-trace.clean.json"
+  },
+  "summary": {
+    "artifactType": "CleanedEvidencePackage",
+    "taskId": "task-2026-06-12T064110798Z",
+    "packageId": "sbs-chatbot-evalgen-2026-06-12-job-interview-experience",
+    "runId": "run-2026-06-12T065215994Z",
+    "coverageStatus": "partial",
+    "packageCaseCount": 15,
+    "collectedCaseCount": 13,
+    "readyCases": 11,
+    "lowConfidenceCases": 2,
+    "missingCases": 2,
+    "turns": 19,
+    "sideTurns": 38,
+    "validationStatus": "pass_with_warnings"
+  },
+  "caveats": [
+    "Missing collected cases: jobint-mt-010, jobint-mt-011.",
+    "No substantive human review state was found in run.manualReviews.",
+    "Unsupported-claim candidates are evidence-cleaning flags for downstream inspection, not final grading judgments.",
+    "Raw run/package/preclean artifacts were preserved; cleaning output is derived only."
+  ]
+}

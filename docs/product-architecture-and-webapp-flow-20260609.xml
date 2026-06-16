@@ -1,0 +1,578 @@
+<title>SBS 4 Any Agent：产品架构设计与一次测评完整 Web App 交互流程</title>
+
+<callout background-color="light-blue" border-color="blue">
+  <p><b>目的</b>：这份文档用于指导 SBS 4 Any Agent MVP 前端开发。它基于当前已完成的 chatbot eval-set generator、餐厅推荐回归包、runtime package schema、manual collection 约束和 portfolio 目标，明确产品架构与一次测评从开始到报告下载的完整交互流程。</p>
+  <p><b>MVP 决策</b>：先做 desktop local Web App；先加载餐厅回归 fixture 反推交互；先跑 manual guided collection；不做自动浏览器、不做自动 grader、不做 multi-turn LLM simulator。</p>
+</callout>
+
+<h1>一、产品架构设计</h1>
+
+<h2>1. 产品定位</h2>
+<p>SBS 4 Any Agent 是一个本地 side-by-side 评测工作台，用于回答一个 PM 决策问题：在一个明确任务空间里，challenger 是否相对最强 baseline 有足够价值，值得继续使用、调研、发布或优化。</p>
+<p>MVP 首先服务 chatbot 类产品评测。baseline 固定为豆包，challenger 是任意可手动粘贴输出的 AI 产品。coding agent arena、自动 runner、自动 grader 都后置。</p>
+
+<h2>2. 设计原则</h2>
+<ol>
+  <li seq="auto"><b>Package-first</b>：前端以 RuntimeEvalPackage 为核心对象，而不是旧的 case-only model。</li>
+  <li seq="auto"><b>Fixture-first</b>：第一版 UI 先加载餐厅推荐回归包，验证 package review、case curation、manual collection、SBS review、report export，再接 Local Codex 生成。</li>
+  <li seq="auto"><b>Human approval is required</b>：生成出来的 eval case 永远是 draft，只有用户 approve 后才能进入 collection。</li>
+  <li seq="auto"><b>Manual collection first</b>：MVP 只做人工复制 prompt、粘贴豆包与 challenger 输出，不承诺浏览器自动化。</li>
+  <li seq="auto"><b>Do not overclaim multi-turn safety</b>：multi-turn 自动 simulator 未实现前，只能标记为 manual_driver。</li>
+  <li seq="auto"><b>Trace is an artifact contract</b>：本地模式下 trace artifact ref 必须能解析；产品模式下必须有 case-index 或 audit-index artifact ref。</li>
+  <li seq="auto"><b>Grader deferred</b>：MVP 可展示 rubricSuggestions 和 manual review，但不实现最终自动评分体系。</li>
+</ol>
+
+<h2>3. 为什么不是 mobile app</h2>
+<table>
+  <thead>
+    <tr>
+      <th background-color="light-gray">维度</th>
+      <th background-color="light-gray">Desktop Web App</th>
+      <th background-color="light-gray">Mobile App</th>
+      <th background-color="light-gray">MVP 判断</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Package review</td>
+      <td>适合密集字段、表格、trace、case list</td>
+      <td>长字段阅读和编辑成本高</td>
+      <td>Web 更合适</td>
+    </tr>
+    <tr>
+      <td>Manual collection</td>
+      <td>复制 prompt、粘贴长输出顺手</td>
+      <td>跨 App 粘贴长文本很痛苦</td>
+      <td>Web 更合适</td>
+    </tr>
+    <tr>
+      <td>SBS review</td>
+      <td>双栏对比自然</td>
+      <td>双栏空间不足</td>
+      <td>Web 更合适</td>
+    </tr>
+    <tr>
+      <td>Local file storage/provider</td>
+      <td>容易接本地 Node API、Codex CLI、报告下载</td>
+      <td>本地文件与 CLI 集成复杂</td>
+      <td>Web MVP</td>
+    </tr>
+    <tr>
+      <td>未来可能性</td>
+      <td>主工作台</td>
+      <td>报告查看、轻量 review</td>
+      <td>Mobile 后置</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4. 系统分层</h2>
+<table>
+  <thead>
+    <tr>
+      <th background-color="light-gray">层</th>
+      <th background-color="light-gray">职责</th>
+      <th background-color="light-gray">MVP 做什么</th>
+      <th background-color="light-gray">后置什么</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frontend UI</td>
+      <td>展示 package、case curation、manual collection、review、report preview</td>
+      <td>完整做</td>
+      <td>复杂 dashboard、历史 run</td>
+    </tr>
+    <tr>
+      <td>Local API</td>
+      <td>读写本地文件、调用 validator、生成 report</td>
+      <td>薄 Node API</td>
+      <td>云后端、账号、团队协作</td>
+    </tr>
+    <tr>
+      <td>Eval Package Store</td>
+      <td>保存当前 package、curation、run、report</td>
+      <td>本地 JSON 文件</td>
+      <td>数据库与历史版本管理</td>
+    </tr>
+    <tr>
+      <td>Eval Generator Provider</td>
+      <td>Local Codex / GPT API 生成 RuntimeEvalPackage</td>
+      <td>第二阶段接 Local Codex</td>
+      <td>GPT API、官方 task-space library</td>
+    </tr>
+    <tr>
+      <td>Manual Harness</td>
+      <td>引导用户复制 prompt、粘贴两侧输出、记录 evidence level</td>
+      <td>完整做</td>
+      <td>浏览器自动化、自动粘贴采集</td>
+    </tr>
+    <tr>
+      <td>Grader</td>
+      <td>根据 rubric 和输出生成维度分、总分、诊断</td>
+      <td>只做 placeholder 和 manual review</td>
+      <td>单独评测体系 session 后实现</td>
+    </tr>
+    <tr>
+      <td>Report Engine</td>
+      <td>导出 Markdown/HTML 报告</td>
+      <td>Markdown 必做，HTML 可选</td>
+      <td>高级图表、自动优化建议</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>5. 核心数据对象</h2>
+<p>前端核心对象不是 EvalCase，而是 RuntimeEvalPackage。它包含九个顶层对象：</p>
+<ol>
+  <li seq="auto">arenaEvalSpec</li>
+  <li seq="auto">evalSetCoveragePlan</li>
+  <li seq="auto">evalCases</li>
+  <li seq="auto">turnScripts</li>
+  <li seq="auto">rubricSuggestions</li>
+  <li seq="auto">reportSkeletonMetadata</li>
+  <li seq="auto">generationTrace</li>
+  <li seq="auto">selfCritiqueTrace</li>
+  <li seq="auto">confirmationBacklog</li>
+</ol>
+<p>前端编辑状态不要直接覆盖原 package。建议分层保存：</p>
+<ul>
+  <li>原始 package：只读或尽量保留 unknown fields。</li>
+  <li>case curation state：caseId、approved/rejected/draft、editedCase、reviewerNotes。</li>
+  <li>run state：每个 case/turn 的双侧输出、evidence level、notes。</li>
+  <li>manual review：winner、rationale、failure modes、product implication、next recommendation。</li>
+</ul>
+
+<h2>6. 本地文件结构</h2>
+<pre lang="text"><code>data/
+  active-project.json
+  packages/
+    current.json
+  runs/
+    current.json
+  reports/
+    current.md
+    current.html
+  provider-runs/
+    latest/
+      input.json
+      raw-output.txt
+      normalized-package.json
+      validation.json
+      case-index.md
+</code></pre>
+<p>第一版可以从 fixture 读取：</p>
+<pre lang="text"><code>artifacts/eval-generation/20260607-restaurant-diandian-vs-doubao/revised-package.json</code></pre>
+
+<h2>7. 前端信息架构</h2>
+<table>
+  <thead>
+    <tr>
+      <th background-color="light-gray">一级页面</th>
+      <th background-color="light-gray">目的</th>
+      <th background-color="light-gray">关键组件</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Package</td>
+      <td>理解这次评测是什么、是否可信、哪些 caveat</td>
+      <td>Arena summary、coverage、quality gates、confirmation backlog、trace refs</td>
+    </tr>
+    <tr>
+      <td>Cases</td>
+      <td>审阅、编辑、approve/reject eval cases</td>
+      <td>case table、case detail、model-facing/evaluator-facing separation、turn script summary</td>
+    </tr>
+    <tr>
+      <td>Collect</td>
+      <td>人工采集豆包和 challenger 输出</td>
+      <td>progress cursor、copy prompt、双侧 textarea、evidence selector、save</td>
+    </tr>
+    <tr>
+      <td>Review</td>
+      <td>SBS 对比输出，写人工观察</td>
+      <td>side-by-side outputs、turn navigation、manual winner、failure notes</td>
+    </tr>
+    <tr>
+      <td>Report</td>
+      <td>导出 portfolio-ready 报告</td>
+      <td>Markdown preview、download、open questions、grader placeholder</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>8. API 设计</h2>
+<table>
+  <thead>
+    <tr>
+      <th background-color="light-gray">API</th>
+      <th background-color="light-gray">职责</th>
+      <th background-color="light-gray">MVP 备注</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GET /api/package/current</td>
+      <td>读取当前 package 与 validation result</td>
+      <td>先从 fixture 初始化</td>
+    </tr>
+    <tr>
+      <td>POST /api/package/load-fixture</td>
+      <td>把餐厅回归包复制为 current package</td>
+      <td>第一版主要入口</td>
+    </tr>
+    <tr>
+      <td>POST /api/package/validate</td>
+      <td>调用 validate_eval_package.mjs --mode local</td>
+      <td>展示 schemaErrors/consistencyErrors</td>
+    </tr>
+    <tr>
+      <td>GET /api/curation/current</td>
+      <td>读取 case curation state</td>
+      <td>默认全部 draft</td>
+    </tr>
+    <tr>
+      <td>POST /api/curation/current</td>
+      <td>保存 approve/reject/edit/notes</td>
+      <td>不破坏原 package</td>
+    </tr>
+    <tr>
+      <td>GET /api/run/current</td>
+      <td>读取 collection run state</td>
+      <td>只包含 approved cases</td>
+    </tr>
+    <tr>
+      <td>POST /api/run/current</td>
+      <td>保存输出、evidence level、notes、manual review</td>
+      <td>实时保存，避免丢数据</td>
+    </tr>
+    <tr>
+      <td>GET /api/report/current</td>
+      <td>生成 report preview</td>
+      <td>Markdown string</td>
+    </tr>
+    <tr>
+      <td>POST /api/report/download</td>
+      <td>写 reports/current.md 或 current.html</td>
+      <td>MVP Markdown 必做</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1>二、一次测评的完整 Web App 交互流程</h1>
+
+<h2>0. 首次进入 App</h2>
+<ol>
+  <li seq="auto">用户打开本地 Web App。</li>
+  <li seq="auto">系统检查 data 目录是否存在；不存在则创建 data/packages、data/runs、data/reports。</li>
+  <li seq="auto">系统检查是否已有 active-project.json。</li>
+  <li seq="auto">如果没有 active project，显示空状态：加载示例评测包、从文件导入、生成新评测包。</li>
+  <li seq="auto">MVP 默认主按钮是“加载餐厅推荐示例包”。</li>
+</ol>
+<p>空状态需要说明：这是本地工作台，所有数据保存在本机；MVP 不会自动访问豆包或 challenger，需要用户手动复制粘贴。</p>
+
+<h2>1. 加载评测包</h2>
+<ol>
+  <li seq="auto">用户点击“加载餐厅推荐示例包”。</li>
+  <li seq="auto">后端读取 artifacts/eval-generation/20260607-restaurant-diandian-vs-doubao/revised-package.json。</li>
+  <li seq="auto">后端复制到 data/packages/current.json。</li>
+  <li seq="auto">后端运行 validator：validate_eval_package.mjs --mode local data/packages/current.json。</li>
+  <li seq="auto">如果验证通过，创建 active-project.json 和空 run state。</li>
+  <li seq="auto">如果验证失败，停留在错误页面，显示 schemaErrors、consistencyErrors、warnings，并禁止进入 collection。</li>
+</ol>
+<p>加载成功后，用户进入 Package 页面。</p>
+
+<h2>2. Package 页面：理解这次评测</h2>
+<p>目标：用户先理解“这次评测到底在评什么”，而不是直接进入 case 表格。</p>
+<ol>
+  <li seq="auto">顶部显示包名/任务空间：餐厅推荐，点点 vs 豆包。</li>
+  <li seq="auto">显示 validation 状态：通过、0 errors、0 warnings、validationMode=local。</li>
+  <li seq="auto">显示决策问题：点点是否在面向小红书主流 18-35 一二线城市中高知识与收入人群的餐厅推荐任务中整体胜出豆包。</li>
+  <li seq="auto">显示 baseline 与 challenger：baseline=Doubao，challenger=Xiaohongshu Diandian。</li>
+  <li seq="auto">显示 successDefinition 与 failureDefinition。</li>
+  <li seq="auto">显示 riskBoundaries，例如不能虚构实时排队、订位、价格、近期热度等。</li>
+  <li seq="auto">显示 target users 和 user jobs。</li>
+</ol>
+
+<h3>2.1 Coverage 区</h3>
+<ol>
+  <li seq="auto">显示 case count：15。</li>
+  <li seq="auto">显示 case mix：single_turn、scripted_multi_turn、capability_probe、boundary_risk、regression_like。</li>
+  <li seq="auto">显示 scored dimensions：intentUnderstanding、outcomeQuality、evidenceGrounding、riskHandling。</li>
+  <li seq="auto">显示 diagnostic dimensions：trajectoryControl。</li>
+  <li seq="auto">显示 disabled dimensions：productExperience。</li>
+  <li seq="auto">显示 dimensionWeights，并标记权重和为 1。</li>
+  <li seq="auto">显示 taskFitModule：目标用户/小红书原生内容 fit 可作为任务价值奖励，但不能抵消 unsupported live/recency certainty。</li>
+</ol>
+
+<h3>2.2 Self-Critique 区</h3>
+<ol>
+  <li seq="auto">显示 quality gates：arenaSpecSpecificity、coverageBalance、coverageRepresentativeness、caseExecutability、caseDiversity、modelEvaluatorSeparation、multiTurnRuntimeReadiness、rubricCaseMapping、reportReadiness、confirmationBacklogCompleteness、traceCompleteness。</li>
+  <li seq="auto">特别显示 coverageRepresentativeness=warn：这是 synthetic decision-slice coverage，不代表真实流量分布。</li>
+  <li seq="auto">显示 revisionSummary：从 draft 到 revised 修了什么。</li>
+  <li seq="auto">显示 unresolvedConfirmationBacklogRefs。</li>
+</ol>
+
+<h3>2.3 Confirmation Backlog 区</h3>
+<ol>
+  <li seq="auto">列出待确认项，例如城市权重、source advantage policy。</li>
+  <li seq="auto">每个确认项显示 recommendedDefault、severity、blocksEvalRun。</li>
+  <li seq="auto">MVP 允许用户跳过确认，但必须在 report caveats 中保留。</li>
+  <li seq="auto">如果 blocksEvalRun=true 且未处理，collection 应禁用。当前餐厅包不阻塞。</li>
+</ol>
+
+<h3>2.4 进入下一步</h3>
+<p>用户点击“Review cases”。系统进入 Cases 页面。此时不要求用户回答所有 confirmation，但页面顶部保留 caveat badge。</p>
+
+<h2>3. Cases 页面：审阅、编辑、批准</h2>
+<p>目标：把生成包从 draft 变成用户认可的可执行 eval set。</p>
+
+<h3>3.1 Case list</h3>
+<ol>
+  <li seq="auto">左侧或主列表显示所有 15 个 case。</li>
+  <li seq="auto">每行显示 caseId、caseType、capabilityCluster、scenario、difficulty、riskLevel、estimatedUserEffort、status。</li>
+  <li seq="auto">支持筛选：全部、approved、rejected、single-turn、multi-turn、risk、capability cluster。</li>
+  <li seq="auto">默认 status 为 draft。</li>
+  <li seq="auto">页面顶部显示 approved count，例如 0/15。</li>
+</ol>
+
+<h3>3.2 Case detail</h3>
+<p>用户点击一个 case 后，右侧显示详情，分成 model-facing 和 evaluator-facing 两类。</p>
+<ul>
+  <li>Model-facing：modelFacingPrompt、initialPrompt、用户可复制的 prompt。</li>
+  <li>Evaluator-facing：evaluatorIntent、hiddenIntent、expectedOutcome、mustDo、mustNotDo、failureModesToProbe、graderRefs。</li>
+  <li>Collection：collectionInstructions、evidenceRequired、collectionMode、estimatedUserEffort。</li>
+  <li>Rubric mapping：该 case 关联哪些 rubricSuggestions。</li>
+</ul>
+<p>UI 必须明显提示：evaluator-facing 内容不能复制给豆包或 challenger。</p>
+
+<h3>3.3 编辑 case</h3>
+<ol>
+  <li seq="auto">用户点击 Edit。</li>
+  <li seq="auto">可编辑字段优先限于 scenario、modelFacingPrompt、constraints、expectedOutcome、mustDo、mustNotDo、failureModesToProbe、reviewerNotes。</li>
+  <li seq="auto">高风险字段如 caseId、caseType、graderRefs、turnScripts 先不开放或放入 advanced edit。</li>
+  <li seq="auto">保存后写入 CaseCurationState.editedCase，不直接破坏原 package。</li>
+  <li seq="auto">UI 显示 edited badge。</li>
+</ol>
+
+<h3>3.4 Approve / reject</h3>
+<ol>
+  <li seq="auto">用户点击 Approve，case status 从 draft 变为 approved。</li>
+  <li seq="auto">用户点击 Reject，必须可选填 reject reason。</li>
+  <li seq="auto">只有 approved case 会进入 Collect 页面。</li>
+  <li seq="auto">如果 approved count=0，Collect 按钮禁用。</li>
+  <li seq="auto">MVP demo 建议 approve 3-5 个 case。</li>
+</ol>
+
+<h3>3.5 Multi-turn case detail</h3>
+<ol>
+  <li seq="auto">如果 caseType=scripted_multi_turn，显示对应 turnScript。</li>
+  <li seq="auto">显示 scriptMode、maxTurns、collectionBurden、stopCondition。</li>
+  <li seq="auto">显示 harnessExecutionContract summary：runtimeModelMode=manual_driver、sideBlind=true、decisionPolicy。</li>
+  <li seq="auto">显示每个 turn 的 progressLabel、modelFacingUserMessage、evaluatorInstruction、allowedAdaptiveMoves、branchRules。</li>
+  <li seq="auto">明确提示：MVP 不自动选择 branch；用户手动按提示推进。</li>
+</ol>
+
+<h2>4. 准备进入 Collection</h2>
+<ol>
+  <li seq="auto">用户点击“Start collection”。</li>
+  <li seq="auto">系统检查 approved cases。</li>
+  <li seq="auto">如果没有 run/current.json，创建新的 RunState。</li>
+  <li seq="auto">如果已有未完成 run，提示继续上次采集或重置。</li>
+  <li seq="auto">进入 Collect 页面，定位到第一个未完成 approved case。</li>
+</ol>
+
+<h2>5. Collect 页面：单轮 case</h2>
+<p>目标：低摩擦地让用户把同一个 prompt 分别投给豆包和 challenger，并保存输出。</p>
+<ol>
+  <li seq="auto">顶部显示进度：Case 1 of N / Turn 1 of 1。</li>
+  <li seq="auto">显示 case summary：scenario、userGoal、constraints、riskLevel。</li>
+  <li seq="auto">显示一个醒目的 Model-facing prompt 卡片。</li>
+  <li seq="auto">用户点击“Copy prompt”。</li>
+  <li seq="auto">用户打开豆包，粘贴 prompt，复制豆包回答。</li>
+  <li seq="auto">用户回到 App，在 Doubao Output 文本框粘贴回答。</li>
+  <li seq="auto">用户可填写 Doubao visible process notes。</li>
+  <li seq="auto">用户设置 Doubao evidence level，默认 Level 0。</li>
+  <li seq="auto">用户打开 challenger，粘贴同一 prompt，复制回答。</li>
+  <li seq="auto">用户回到 App，在 Challenger Output 文本框粘贴回答。</li>
+  <li seq="auto">用户可填写 Challenger visible process notes。</li>
+  <li seq="auto">用户设置 Challenger evidence level，默认 Level 0。</li>
+  <li seq="auto">系统自动保存草稿，也允许点击 Save turn。</li>
+  <li seq="auto">如果两侧都有 finalOutput，turn 标记为 complete。</li>
+  <li seq="auto">用户点击 Next case。</li>
+</ol>
+
+<h3>5.1 单轮采集防坑规则</h3>
+<ul>
+  <li>不要让用户手动改 baseline/challenger 名称；在本次 run 内固定。</li>
+  <li>Copy prompt 只能复制 modelFacingPrompt，不能复制 evaluatorIntent、hiddenIntent、rubric、failureModes。</li>
+  <li>如果用户粘贴空输出，不能标记 complete。</li>
+  <li>保存 evidence level 时必须按 side 分开。</li>
+  <li>如果用户修改了 prompt，应记录 promptSent，而不是覆盖原 case。</li>
+</ul>
+
+<h2>6. Collect 页面：多轮 case</h2>
+<p>目标：支持 manual guided multi-turn，不假装自动 simulator。</p>
+<ol>
+  <li seq="auto">顶部显示进度：Case X of N / Turn Y of Z。</li>
+  <li seq="auto">显示 manual_driver badge：本轮由人工按脚本推进，未使用 guarded LLM simulator。</li>
+  <li seq="auto">显示 turnScript.stopCondition 和 stateToTrack。</li>
+  <li seq="auto">显示当前 turn 的 modelFacingUserMessage。</li>
+  <li seq="auto">显示 evaluatorInstruction，但用不同样式标为“不要复制给模型”。</li>
+  <li seq="auto">显示 allowedAdaptiveMoves 和 branchRules，默认折叠，用户需要时展开。</li>
+  <li seq="auto">用户点击 Copy current user message。</li>
+  <li seq="auto">用户分别在豆包和 challenger 的同一 case 对话中发送该 turn。</li>
+  <li seq="auto">用户粘贴两侧本轮输出。</li>
+  <li seq="auto">用户记录 trajectory notes，例如是否漂移、是否追问、是否 overpromise。</li>
+  <li seq="auto">如果模型行为触发 branchRules，用户选择 selectedBranchRuleId。</li>
+  <li seq="auto">系统记录 branch decision，但不会自动生成下一句。</li>
+  <li seq="auto">用户进入下一 turn。</li>
+  <li seq="auto">达到 stopCondition 或 maxTurns 后，case 标记 complete。</li>
+</ol>
+
+<h3>6.1 多轮采集的关键状态</h3>
+<table>
+  <thead>
+    <tr>
+      <th background-color="light-gray">状态</th>
+      <th background-color="light-gray">谁持有</th>
+      <th background-color="light-gray">MVP 用法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>caseId / turnIndex / maxTurns</td>
+      <td>App harness</td>
+      <td>驱动进度显示与保存路径</td>
+    </tr>
+    <tr>
+      <td>sideLabel</td>
+      <td>未来 simulator 可见</td>
+      <td>MVP 不使用自动 simulator，但数据模型保留</td>
+    </tr>
+    <tr>
+      <td>selectedBranchRuleId</td>
+      <td>用户选择或未来 simulator 输出</td>
+      <td>手动记录，不自动分支</td>
+    </tr>
+    <tr>
+      <td>promptSent</td>
+      <td>RunTurnState</td>
+      <td>记录实际复制给产品的话术</td>
+    </tr>
+    <tr>
+      <td>baseline/challenger output</td>
+      <td>RunTurnState</td>
+      <td>保存双侧可见输出</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>6.2 多轮采集防坑规则</h3>
+<ul>
+  <li>不要把 hiddenIntent、expectedOutcome、rubric、failureModes 显示在 Copy 区域内。</li>
+  <li>不要自动把 branchRules 的 evaluatorNote 拼进用户消息。</li>
+  <li>不要因为用户未选择 branch rule 就阻塞保存；但要允许记录“manual no branch selected”。</li>
+  <li>不要在 MVP 中声明 sideBlind simulator 已执行；最多展示 contract read-only。</li>
+  <li>如果用户提前停止 case，必须记录 stop reason。</li>
+</ul>
+
+<h2>7. Collection 进度与退出</h2>
+<ol>
+  <li seq="auto">Collect 页面左侧显示 approved cases 进度。</li>
+  <li seq="auto">每个 case 状态：not_started、collecting、complete、skipped。</li>
+  <li seq="auto">用户可随时退出；系统保存 run state。</li>
+  <li seq="auto">再次进入时，系统恢复到第一个未完成 turn。</li>
+  <li seq="auto">用户可跳过 case，但 report 中显示 skipped。</li>
+  <li seq="auto">当至少一个 case complete，Review 页面可进入。</li>
+</ol>
+
+<h2>8. Review 页面：SBS 对比</h2>
+<p>目标：让用户基于已采集输出做人工判断，并为未来 grader/report 保留结构化输入。</p>
+<ol>
+  <li seq="auto">左侧显示 completed cases 列表。</li>
+  <li seq="auto">用户选择一个 case。</li>
+  <li seq="auto">页面顶部显示 case summary、expectedOutcome、mustDo、mustNotDo、riskLevel。</li>
+  <li seq="auto">中间显示双栏：Doubao output 与 Challenger output。</li>
+  <li seq="auto">每栏显示 evidence level、visible process notes、collection timestamp。</li>
+  <li seq="auto">如果是多轮 case，支持按 turn 切换，也支持查看 full transcript。</li>
+  <li seq="auto">右侧显示 rubricSuggestions 只读摘要：dimensionId、positiveSignals、negativeSignals、redLineFailures。</li>
+  <li seq="auto">用户填写 manualReview：winner、rationale、notableFailureModes、productImplication、nextRecommendation。</li>
+  <li seq="auto">保存后，该 case 标记 reviewed。</li>
+</ol>
+
+<h3>8.1 Review 防坑规则</h3>
+<ul>
+  <li>不要把 manual winner 当最终自动 grader 结果。</li>
+  <li>不要隐藏 evidence level 差异；如果一侧只有 Level 0，报告要保留 caveat。</li>
+  <li>rubricSuggestions 是 evaluator-facing handoff，不是最终分数。</li>
+  <li>如果 case 有 redLineFailures，Review 页面应高亮给用户参考，但不自动 cap score。</li>
+</ul>
+
+<h2>9. Report 页面</h2>
+<p>目标：生成一份可下载、可展示给面试官的 Markdown 报告。</p>
+<ol>
+  <li seq="auto">用户进入 Report 页面。</li>
+  <li seq="auto">系统生成 report preview。</li>
+  <li seq="auto">报告包括 Arena summary：task space、decision question、baseline、challenger、target users。</li>
+  <li seq="auto">报告包括 Eval package summary：case count、case mix、dimension weights、quality gates。</li>
+  <li seq="auto">报告包括 caveats：synthetic coverage、unresolved confirmation backlog、manual collection、no automatic grader。</li>
+  <li seq="auto">报告包括 approved cases 列表。</li>
+  <li seq="auto">报告包括每个 completed case 的 SBS outputs 和 manualReview。</li>
+  <li seq="auto">报告包括 evidence level per side。</li>
+  <li seq="auto">报告包括 failure mode observations 和 product implications。</li>
+  <li seq="auto">报告包括 grader placeholder：最终 grader methodology deferred。</li>
+  <li seq="auto">用户点击 Download Markdown。</li>
+  <li seq="auto">后端写入 data/reports/current.md，并触发浏览器下载或展示文件路径。</li>
+</ol>
+
+<h3>9.1 Report 防坑规则</h3>
+<ul>
+  <li>不要声称此次评测代表真实用户流量。</li>
+  <li>不要声称自动评分已经完成。</li>
+  <li>不要隐藏 skipped 或 incomplete cases。</li>
+  <li>不要把 evaluator-only 字段暴露为用户实际 prompt。</li>
+  <li>报告必须可审计：引用 package、run、trace artifacts、validation status。</li>
+</ul>
+
+<h2>10. 后续接入 Local Codex 生成</h2>
+<p>当 fixture consumption loop 跑通后，再加 Generate flow。</p>
+<ol>
+  <li seq="auto">用户在 Setup 页面输入 taskSpace、evaluationScenario、challenger、targetUsers、case count、case mix、是否评估 productExperience。</li>
+  <li seq="auto">用户点击 Generate package。</li>
+  <li seq="auto">后端构造 prompt，调用 Local Codex provider。</li>
+  <li seq="auto">后端保存 provider artifacts：input、raw output、normalized package、validation、case-index。</li>
+  <li seq="auto">validator 通过后，加载为 current package。</li>
+  <li seq="auto">如果 validator 失败，展示错误，不允许进入 approved eval set。</li>
+  <li seq="auto">用户仍然从 Package 页面开始 review，而不是直接 collection。</li>
+</ol>
+
+<h2>11. 当前 MVP 不做的事</h2>
+<ul>
+  <li>不做浏览器自动化打开豆包。</li>
+  <li>不自动调用 challenger。</li>
+  <li>不做 guarded LLM multi-turn simulator。</li>
+  <li>不做最终 grader 与总分。</li>
+  <li>不做历史 run dashboard。</li>
+  <li>不做 mobile-native app。</li>
+  <li>不做 official task-space set library。</li>
+</ul>
+
+<h1>三、开发落地顺序</h1>
+<ol>
+  <li seq="auto">Scaffold Vite + React + local Node API。</li>
+  <li seq="auto">实现 data 目录初始化。</li>
+  <li seq="auto">实现 load fixture + validate。</li>
+  <li seq="auto">实现 Package 页面。</li>
+  <li seq="auto">实现 Cases 页面：case table、detail、approve/reject/edit。</li>
+  <li seq="auto">实现 Collect 页面：single-turn first，再 multi-turn manual_driver。</li>
+  <li seq="auto">实现 Review 页面：side-by-side + manual review。</li>
+  <li seq="auto">实现 Report 页面：Markdown preview + download。</li>
+  <li seq="auto">补 README、sample report、demo script。</li>
+  <li seq="auto">最后接 Local Codex generation。</li>
+</ol>
+
+<callout background-color="light-yellow" border-color="yellow">
+  <p><b>最重要的开发提醒</b>：第一版不要为了“完整自动化”拖慢。MVP 的价值是把强 eval package 变成可交互、可采集、可报告的本地工作台。自动 grader、自动 runner、multi-turn simulator 都应该等手动闭环跑通后再做。</p>
+</callout>
